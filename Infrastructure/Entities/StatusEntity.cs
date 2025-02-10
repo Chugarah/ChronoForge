@@ -6,7 +6,7 @@ namespace Infrastructure.Entities;
 
 
 [Index(nameof(Name), IsUnique = true)]
-public class Status
+public class StatusEntity
 {
     [Key]
     public int Id {get; init;}

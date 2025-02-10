@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.DataSeeding;
 
-public class RolesConfiguration : IEntityTypeConfiguration<Roles>
+public class RolesConfiguration : IEntityTypeConfiguration<RolesEntity>
 {
-    public void Configure(EntityTypeBuilder<Roles> builder)
+    public void Configure(EntityTypeBuilder<RolesEntity> builder)
     {
         builder.HasData(
-            new Roles { Id = 1, Name= "No Roles" },
-            new Roles { Id = 2, Name = "Project Manager" },
-            new Roles { Id = 3, Name = "Customer" },
-            new Roles { Id = 4, Name = "Client" }
+            new RolesEntity { Id = 1, Name= "No Roles" },
+            new RolesEntity { Id = 2, Name = "Project Manager" },
+            new RolesEntity { Id = 3, Name = "Customer" },
+            new RolesEntity { Id = 4, Name = "Client" }
         );
     }
 }

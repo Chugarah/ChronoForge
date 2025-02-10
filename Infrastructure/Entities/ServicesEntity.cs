@@ -8,7 +8,7 @@ namespace Infrastructure.Entities;
     nameof(PaymentTypeId),
     nameof(Name),
     IsUnique = true)]
-public class Services
+public class ServicesEntity
 {
     [Key]
     public int Id { get; init; }
@@ -16,12 +16,12 @@ public class Services
     // Navigation properties for EF Core relationships
     public int CustomerId { get; init; }
     [ForeignKey(nameof(CustomerId))]
-    public Customers Customers { get; init; } = null!;
+    public CustomersEntity CustomersEntity { get; init; } = null!;
 
     // Navigation properties for EF Core relationships
     public int PaymentTypeId { get; init; }
     [ForeignKey(nameof(PaymentTypeId))]
-    public PaymentType PaymentType { get; init; } = null!;
+    public PaymentTypeEntity PaymentTypeEntity { get; init; } = null!;
 
     [Required]
     [Column(TypeName = "nvarchar(150)")]

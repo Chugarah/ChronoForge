@@ -20,13 +20,13 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         dotnet ef database update
      */
 
-    public DbSet<Status> Status { get; set; }
-    public DbSet<Roles> Roles { get; set; }
-    public DbSet<Users> Users { get; set; }
-    public DbSet<Projects> Projects { get; set; }
-    public DbSet<Customers> Customers { get; set; }
-    public DbSet<PaymentType> PaymentType { get; set; }
-    public DbSet<Services> Services { get; set; }
+    public DbSet<StatusEntity> Status { get; set; }
+    public DbSet<RolesEntity> Roles { get; set; }
+    public DbSet<UsersEntity> Users { get; set; }
+    public DbSet<ProjectsEntity> Projects { get; set; }
+    public DbSet<CustomersEntity> Customers { get; set; }
+    public DbSet<PaymentTypeEntity> PaymentType { get; set; }
+    public DbSet<ServicesEntity> Services { get; set; }
 
     // Here is where we define our tables
     // Specify Connection String in the app settings.json, if using multiple presentation
@@ -53,7 +53,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         // modelBuilder.Entity<TableName>().HasIndex(x => x.Key1).IsUnique();
 
         // Composite Key for Customers and a unique constraint for Name and ContactPersonId
-        modelBuilder.Entity<Customers>(entity =>
+        modelBuilder.Entity<CustomersEntity>(entity =>
         {
             // Composite Key for Customers ID
             entity.HasKey(e => new { e.Id });
@@ -75,7 +75,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 
         // Inspired by Robin
         // Setting the Identity column to start at 100 and increment by 1
-        modelBuilder.Entity<Projects>().Property(p => p.Id).UseIdentityColumn(100, 1);
+        modelBuilder.Entity<ProjectsEntity>().Property(p => p.Id).UseIdentityColumn(100, 1);
 
         // Loading the configurations from the DataSeeding folder to seed the database
         // Inspired by Robin and Partially created by AI Phind

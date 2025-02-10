@@ -6,7 +6,7 @@ namespace Infrastructure.Entities;
 
 
 [Index(nameof(Name), IsUnique = true)]
-public class Customers
+public class CustomersEntity
 {
     [Key]
     public int Id { get; init; }
@@ -18,5 +18,5 @@ public class Customers
     // Navigation properties for EF Core relationships
     public int ContactPersonId { get; init; }
     [ForeignKey(nameof(ContactPersonId))]
-    public Users Users { get; init; } = null!;
+    public UsersEntity UsersEntity { get; init; } = null!;
 }

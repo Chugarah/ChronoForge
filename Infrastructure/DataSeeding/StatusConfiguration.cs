@@ -9,15 +9,15 @@ namespace Infrastructure.DataSeeding;
 ///  The Status table is used to store the status of the project
 ///  This is partially created by AI Phind
 /// </summary>
-public class StatusConfiguration : IEntityTypeConfiguration<Status>
+public class StatusConfiguration : IEntityTypeConfiguration<StatusEntity>
 {
-    public void Configure(EntityTypeBuilder<Status> builder)
+    public void Configure(EntityTypeBuilder<StatusEntity> builder)
     {
         builder.HasData(
-            new Status { Id = 1, Name= "No Status" },
-            new Status { Id = 2, Name = "Not Started" },
-            new Status { Id = 3, Name = "In Progress" },
-            new Status { Id = 4, Name = "Completed" }
+            new StatusEntity { Id = 1, Name= "No Status" },
+            new StatusEntity { Id = 2, Name = "Not Started" },
+            new StatusEntity { Id = 3, Name = "In Progress" },
+            new StatusEntity { Id = 4, Name = "Completed" }
         );
     }
 }
