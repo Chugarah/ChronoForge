@@ -1,6 +1,6 @@
 ﻿using Domain;
 
-namespace Core.Interfaces;
+namespace Core.Interfaces.Data;
 
 public interface IStatusRepository : IBaseRepository<Status>
 {

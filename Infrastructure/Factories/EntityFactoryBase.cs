@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces;
+using Core.Interfaces.Data;
 using Infrastructure.Helpers;
 
 namespace Infrastructure.Factories;

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Core.Interfaces;
+using Core.Interfaces.Data;
 using Infrastructure.Contexts;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;

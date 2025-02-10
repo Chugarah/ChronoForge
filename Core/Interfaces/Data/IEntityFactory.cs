@@ -1,4 +1,4 @@
-﻿namespace Core.Interfaces;
+﻿namespace Core.Interfaces.Data;
 
 public interface IEntityFactory<TDomain, TEntity>
 {
