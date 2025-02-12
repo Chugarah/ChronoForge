@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Core.DTOs.Project;
+using Core.DTOs.Project.Status;
 using Core.Interfaces.Data;
 using Core.Interfaces.Project;
 using Domain;
@@ -96,6 +97,98 @@ public class StatusService(
         {
             // Throw an exception with a message
             throw new Exception("Could not get the status from the database:", ex);
+        }
+    }
+
+
+    /// <summary>
+    /// Update a status in the database
+    /// </summary>
+    /// <param name="statusUpdateDto"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<StatusDisplay> UpdateStatusAsync(StatusUpdate statusUpdateDto)
+    {
+        try
+        {
+            // Get the status from the database
+            // https://stackoverflow.com/questions/606636/best-way-to-handle-a-keynotfoundexception
+            var status = await statusRepository.GetAsync(s => s!.Id == statusUpdateDto.Id)
+                         ?? throw new KeyNotFoundException($"Status with ID {statusUpdateDto.Id} not found");
+
+            // Update the status properties
+            status.Name = statusUpdateDto.Name;
+
+            #region BEGIN TRANSACTION
+
+            // Begin Transaction to ensure that all operations are successful
+            await unitOfWork.BeginTransactionAsync();
+
+            // Update the status in the database
+            await statusRepository.UpdateAsync(status);
+
+            // Save the changes to the database
+            await unitOfWork.SaveChangesAsync();
+
+            // Commit the transaction to ensure that all operations are successful
+            await unitOfWork.CommitTransactionAsync();
+
+            #endregion END TRANSACTION
+
+            // Return the updated status as a display DTO
+            return statusDtoFactory.ToDisplayDto(status)!;
+        }
+        catch (DbException ex)
+        {
+            // Rollback the transaction if an error occurs
+            await unitOfWork.RollbackTransactionAsync();
+
+            // Used Rider to Refactor the code
+            // Check if the exception is a duplicate key error
+            if (ex is SqlException { Number: 2601 or 2627 })
+            {
+                throw new Exception($"Status name '{statusUpdateDto.Name}' already exists", ex);
+            }
+
+            // Throw an exception with a message
+            throw new Exception("Could not update the status in the database:", ex);
+        }
+    }
+
+    public async Task<StatusDisplay> DeleteStatusAsync(int id)
+    {
+        try
+        {
+            // Get the status from the database
+            var status = await statusRepository.GetAsync(s => s!.Id == id)
+                         ?? throw new KeyNotFoundException($"Status with ID {id} not found");
+
+            #region BEGIN TRANSACTION
+
+            // Begin Transaction to ensure that all operations are successful
+            await unitOfWork.BeginTransactionAsync();
+
+            // Delete the status in the database
+            await statusRepository.DeleteAsync(status);
+
+            // Save the changes to the database
+            await unitOfWork.SaveChangesAsync();
+
+            // Commit the transaction to ensure that all operations are successful
+            await unitOfWork.CommitTransactionAsync();
+
+            #endregion END TRANSACTION
+
+            // Return the deleted status as a display DTO
+            return statusDtoFactory.ToDisplayDto(status)!;
+        }
+        catch (DbException ex)
+        {
+            // Rollback the transaction if an error occurs
+            await unitOfWork.RollbackTransactionAsync();
+
+            // Throw an exception with a message
+            throw new Exception("Could not delete the status in the database:", ex);
         }
     }
 }

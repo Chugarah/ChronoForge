@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.DTOs.Project;
+namespace Core.DTOs.Project.Status;
 
-public class StatusDisplay
+public class StatusUpdate
 {
     [Required]
     public int Id { get; set; }

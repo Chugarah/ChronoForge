@@ -1,4 +1,5 @@
 ﻿using Core.DTOs.Project;
+using Core.DTOs.Project.Status;
 using Domain;
 
 namespace Core.Interfaces.Project;

@@ -84,4 +84,38 @@ public abstract class BaseRepository<TDomain, TEntity>(
         return entity != null ? factory.ToDomain(entity) : null;
     }
 
+    /// <summary>
+    ///  Updates an existing domain entity in the database
+    /// </summary>
+    /// <param name="domainEntity"></param>
+    /// <returns></returns>
+    public Task<TDomain?> UpdateAsync(TDomain? domainEntity)
+    {
+        // Convert the domain object to an entity object
+        var entity = factory.ToEntity(domainEntity);
+
+        // Update the entity in the DbSet
+        _dbSet.Update(entity);
+
+        // Return the domain object
+        return Task.FromResult(factory.ToDomain(entity));
+    }
+
+    /// <summary>
+    /// Deletes an existing domain entity in the database
+    /// </summary>
+    /// <param name="domainEntity"></param>
+    /// <returns></returns>
+    public Task<TDomain?> DeleteAsync(TDomain? domainEntity)
+    {
+        // Convert the domain object to an entity object
+        var entity = factory.ToEntity(domainEntity);
+
+        // Remove the entity from the DbSet
+        _dbSet.Remove(entity);
+
+        // Return the domain object
+        return Task.FromResult(factory.ToDomain(entity));
+    }
+
 }

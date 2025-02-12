@@ -48,7 +48,7 @@ public class UnitOfWork(DataContext dataContext) : IUnitOfWork
     public async Task CommitTransactionAsync()
     {
         // Commit the transaction
-        await _transaction.CommitAsync();
+        await _transaction!.CommitAsync();
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class UnitOfWork(DataContext dataContext) : IUnitOfWork
     public async Task RollbackTransactionAsync()
     {
         // Rollback the transaction
-        await _transaction.RollbackAsync();
+        await _transaction!.RollbackAsync();
     }
 
     /// <summary>
