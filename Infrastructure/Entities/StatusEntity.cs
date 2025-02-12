@@ -11,7 +11,7 @@ public class StatusEntity
     [Key]
     public int Id {get; init;}
 
-    [Column(TypeName = "nvarchar(50)")]
     [Required]
+    [Column(TypeName = "nvarchar(50)")]
     public string Name {get ; init;} = null!;
 }

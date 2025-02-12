@@ -4,6 +4,7 @@ namespace Core.Interfaces.Project;
 
 public interface IStatusService
 {
-    public Task CreateStatusAsync(StatusInsert status);
+    Task<StatusDisplay?> CreateStatusAsync(StatusInsert status);
+    Task<StatusDisplay?> GetStatusByIdAsync(int id);
     
 }

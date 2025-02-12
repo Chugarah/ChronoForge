@@ -1,12 +1,17 @@
-﻿using Core.Interfaces;
+﻿using System.Linq.Expressions;
+using Core.Interfaces;
 using Core.Interfaces.Data;
 using Domain;
 using Infrastructure.Entities;
 
 namespace Infrastructure.Factories.Project;
 
-public abstract class StatusFactory : IEntityFactory<Status, StatusEntity>
+/// <summary>
+/// Status Factory
+/// </summary>
+public class StatusFactory : EntityFactoryBase<Status, StatusEntity>
 {
+
     /// <summary>
     /// Create a StatusEntity from a Status Entity to
     /// a domain object
@@ -14,7 +19,7 @@ public abstract class StatusFactory : IEntityFactory<Status, StatusEntity>
     /// </summary>
     /// <param name="statusEntity"></param>
     /// <returns></returns>
-    public Status ToDomain(StatusEntity statusEntity) => new()
+    public override Status ToDomain(StatusEntity statusEntity) => new()
     {
         Id = statusEntity.Id,
         Name = statusEntity.Name
@@ -26,7 +31,7 @@ public abstract class StatusFactory : IEntityFactory<Status, StatusEntity>
     /// </summary>
     /// <param name="status"></param>
     /// <returns></returns>
-    public StatusEntity ToEntity(Status status) => new()
+    public override StatusEntity ToEntity(Status status) => new()
     {
         Id = status.Id,
         Name = status.Name

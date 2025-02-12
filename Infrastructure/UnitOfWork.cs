@@ -10,7 +10,7 @@ namespace Infrastructure;
 /// Coordinates database operations and transactions across multiple repositories
 /// </summary>
 /// <remarks>
-/// Implements Unit of Work pattern to:
+/// Implements Unit of a Work pattern to:
 /// <para>- Manage transaction lifecycle</para>
 /// <para>- Ensure atomic operations across repositories</para>
 /// <para>- Centralize database change tracking</para>
@@ -19,21 +19,24 @@ namespace Infrastructure;
 /// <param name="transaction">Initial transaction state</param>
 /// <seealso cref="https://www.c-sharpcorner.com/UploadFile/b1df45/unit-of-work-in-repository-pattern/"/>
 /// <seealso cref="https://stackoverflow.com/questions/54671253/registering-iunitofwork-as-service-in-net-core"/>
-public class UnitOfWork(DataContext dataContext, IDbContextTransaction transaction) : IUnitOfWork
+public class UnitOfWork(DataContext dataContext) : IUnitOfWork
 {
-    private IDbContextTransaction _transaction = transaction;
+    // IdbcontextTransaction is used to manage transactions and
+    // we are setting it to null initially
+    private IDbContextTransaction? _transaction;
 
     /// <summary>
     /// Initiates a new database transaction
     /// </summary>
     /// <remarks>
-    /// Creates an explicit transaction if none exists. Subsequent calls will
+    /// Creates an explicit transaction if none exists. Later calls will
     /// reuse the existing transaction scope until commit/rollback.
     /// </remarks>
     public async Task BeginTransactionAsync()
     {
         // Begin the transaction and store it in the _transaction variable
-        _transaction = await dataContext.Database.BeginTransactionAsync();
+        // if it is null or not already created than create a new transaction
+        _transaction ??= await dataContext.Database.BeginTransactionAsync();
     }
 
     /// <summary>

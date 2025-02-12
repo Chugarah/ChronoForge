@@ -5,7 +5,7 @@ namespace Core.Interfaces.Project;
 
 public interface IStatusDtoFactory
 {
-    Status ToDomain(StatusInsert createDto);
+    Status? ToDomain(StatusInsert createDto);
     StatusInsert ToCreateDto(Status status);
-    StatusDisplay ToDisplayDto(Status status);
+    StatusDisplay? ToDisplayDto(Status status);
 }

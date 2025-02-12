@@ -1,4 +1,6 @@
-﻿namespace Core.Interfaces.Data;
+﻿using System.Linq.Expressions;
+
+namespace Core.Interfaces.Data;
 
 /// <summary>
 ///  This interface is used to create a generic repository
@@ -8,5 +10,6 @@
 public interface IBaseRepository<TDomain>
     where TDomain : class
 {
-    Task<TDomain> CreateAsync(TDomain domainEntity);
+    Task<TDomain?> CreateAsync(TDomain? domainEntity);
+    Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> predicate);
 }

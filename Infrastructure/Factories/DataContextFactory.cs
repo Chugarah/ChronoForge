@@ -20,9 +20,15 @@ public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
     /// <returns>A new instance of DataContext configured with the application's database connection</returns>
     public DataContext CreateDbContext(string[] args)
     {
+        // This path is relative to the project root for infrastructure
+        var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Infrastructure");
+        // Load the .env file
+        DotNetEnv.Env.Load(Path.Combine(envPath, ".env"));
+
+        // Create a new instance of DbContextOptionsBuilder
         var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-        // Used ChatGPT to create the connection string
-        optionsBuilder.UseSqlServer("Server=localhost;Database=Chrono_Forge;Trusted_Connection=True;TrustServerCertificate=True;");
+        // Used ChatGPT to create the connection string. This needs to be changed if using Mysql or SQL Lite
+        optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("DB_SQL_CONNECTION_STRING"));
         return new DataContext(optionsBuilder.Options);
     }
 }

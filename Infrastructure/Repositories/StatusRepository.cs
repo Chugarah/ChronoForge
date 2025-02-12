@@ -11,7 +11,7 @@ namespace Infrastructure.Repositories;
 /// </summary>
 /// <param name="dbContext"></param>
 /// <param name="factory"></param>
-public class StatusRepository(DataContext dbContext, IEntityFactory<Status, StatusEntity> factory)
+public class StatusRepository(DataContext dbContext, IEntityFactory<Status?, StatusEntity> factory)
     : BaseRepository<Status, StatusEntity>(dbContext, factory),
         IStatusRepository
 {
