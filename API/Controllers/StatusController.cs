@@ -30,19 +30,24 @@ public class StatusController(IStatusService statusService, IWebHostEnvironment 
     {
         try
         {
+            // Create the status
             var displayDto = await statusService.CreateStatusAsync(status);
+            // Return a created response
             return Results.CreatedAtRoute(
                 routeName: "GetStatusById",
                 routeValues: new { id = displayDto!.Id, displayDto },
                 value: displayDto
             );
         }
+        // Catch duplicate key error
         catch (DbUpdateException ex) when (IsDuplicateKeyError(ex))
         {
+            // Return a conflict response
             return ApiResponseHelper.ConflictDuplicate("Status already exists");
         }
         catch (Exception ex)
         {
+            // Return a problem response
             return ApiResponseHelper.Problem(ex, environment.IsDevelopment());
         }
     }
@@ -59,13 +64,16 @@ public class StatusController(IStatusService statusService, IWebHostEnvironment 
     {
         try
         {
+            // Get the status from the database
             var status = await statusService.GetStatusByIdAsync(id);
+            // Return the status
             return status != null
                 ? ApiResponseHelper.Success(status)
                 : ApiResponseHelper.NotFound("Status not found");
         }
         catch (Exception ex)
         {
+            // Return a problem response
             return ApiResponseHelper.Problem(ex, environment.IsDevelopment());
         }
     }
