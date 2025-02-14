@@ -2,7 +2,7 @@
 
 namespace Core.DTOs.Project.Status;
 
-public class StatusDisplay
+public class StatusDisplayDto
 {
     [Required]
     public int Id { get; set; }

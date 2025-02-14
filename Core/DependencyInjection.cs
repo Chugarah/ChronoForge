@@ -1,4 +1,5 @@
 ﻿using Core.Factories;
+using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
 using Core.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +18,10 @@ public static class DependencyInjection
     {
         // Register domain services
         services.AddScoped<IStatusService, StatusService>();
+        services.AddScoped<IProjectService, ProjectService>();
         // Register factories
         services.AddScoped<IStatusDtoFactory, StatusDtoFactory>();
+        services.AddScoped<IProjectDtoFactory, ProjectDtoFactory>();
         return services;
     }
 }

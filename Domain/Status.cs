@@ -7,4 +7,6 @@ public class Status
 {
     public int Id { get; init; }
     public string Name { get; set; } = null!;
+    // This creates a bidirectional (navigation) relationship between the Project and Status entities
+    public ICollection<Projects> Projects { get; set; } = [];
 }

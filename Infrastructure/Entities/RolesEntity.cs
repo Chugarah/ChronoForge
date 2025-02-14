@@ -10,7 +10,7 @@ public class RolesEntity
 {
     [Key]
     public int Id { get; init; }
-    public ICollection<UsersEntity> Users { get; init; } = null!;
+    public ICollection<UsersEntity> UsersEntity { get; init; } = null!;
 
     [Required]
     [Column(TypeName = "nvarchar(50)")]

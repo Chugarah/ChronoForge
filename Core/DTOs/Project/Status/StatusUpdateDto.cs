@@ -2,9 +2,12 @@
 
 namespace Core.DTOs.Project.Status;
 
-public class StatusInsert
+public class StatusUpdateDto
 {
     [Required]
+    public int Id { get; set; }
+
+    [Required]
     [StringLength(50)]
-    public string Name { get; init; } = null!;
+    public string Name { get; set; } = null!;
 }

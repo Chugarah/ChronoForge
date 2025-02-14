@@ -13,5 +13,6 @@ public interface IBaseRepository<TDomain>
     Task<TDomain?> CreateAsync(TDomain? domainEntity);
     Task<TDomain?> UpdateAsync(TDomain? domainEntity);
     Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> predicate);
+    Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> predicate, params Expression<Func<TDomain, object>>[]? includes);
     Task<TDomain?> DeleteAsync(TDomain? domainEntity);
 }

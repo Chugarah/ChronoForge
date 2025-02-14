@@ -5,9 +5,9 @@ namespace Core.Interfaces.Project;
 
 public interface IStatusService
 {
-    Task<StatusDisplay?> CreateStatusAsync(StatusInsert status);
-    Task<StatusDisplay?> GetStatusByIdAsync(int id);
-    Task<StatusDisplay> UpdateStatusAsync(StatusUpdate statusUpdateDto);
-    Task<StatusDisplay> DeleteStatusAsync(int id);
+    Task<StatusDisplayDto?> CreateStatusAsync(StatusInsertDto status);
+    Task<StatusDisplayDto?> GetStatusByIdAsync(int id);
+    Task<StatusDisplayDto> UpdateStatusAsync(StatusUpdateDto statusUpdateDtoDto);
+    Task<StatusDisplayDto> DeleteStatusAsync(int id);
 
 }

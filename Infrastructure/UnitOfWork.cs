@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces;
 using Core.Interfaces.Data;
 using Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure;
@@ -21,7 +22,7 @@ namespace Infrastructure;
 /// <seealso cref="https://stackoverflow.com/questions/54671253/registering-iunitofwork-as-service-in-net-core"/>
 public class UnitOfWork(DataContext dataContext) : IUnitOfWork
 {
-    // IdbcontextTransaction is used to manage transactions and
+    // IdbcontextTransaction is used to manage transactions, and
     // we are setting it to null initially
     private IDbContextTransaction? _transaction;
 
@@ -47,8 +48,13 @@ public class UnitOfWork(DataContext dataContext) : IUnitOfWork
     /// </exception>
     public async Task CommitTransactionAsync()
     {
+        // If there is no transaction, return
+        if (_transaction == null)
+            return;
         // Commit the transaction
-        await _transaction!.CommitAsync();
+        await _transaction.CommitAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
     }
 
     /// <summary>
@@ -56,8 +62,14 @@ public class UnitOfWork(DataContext dataContext) : IUnitOfWork
     /// </summary>
     public async Task RollbackTransactionAsync()
     {
+        // If there is no transaction, return
+        if (_transaction == null)
+            return;
+
         // Rollback the transaction
-        await _transaction!.RollbackAsync();
+        await _transaction.RollbackAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
     }
 
     /// <summary>
@@ -67,8 +79,22 @@ public class UnitOfWork(DataContext dataContext) : IUnitOfWork
     /// <returns>Number of affected records</returns>
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        // Save changes to the database
-       return await dataContext.SaveChangesAsync(cancellationToken);
+        // Single save operation with reload
+        var result = await dataContext.SaveChangesAsync(cancellationToken);
+
+        // Reload only the necessary entries
+        var addedEntries = dataContext.ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Added)
+            .ToList();
+
+        // Reload the added entries
+        foreach (var entry in addedEntries)
+        {
+            await entry.ReloadAsync(cancellationToken);
+        }
+
+        // Return the number of affected records
+        return result;
     }
 
     /// <summary>

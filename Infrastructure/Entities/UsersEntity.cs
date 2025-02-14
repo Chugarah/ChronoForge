@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Entities;
@@ -11,7 +12,8 @@ public class UsersEntity
 {
     [Key]
     public int Id { get; init; }
-    public ICollection<RolesEntity> Roles { get; init; } = null!;
+    public ICollection<ProjectsEntity> ProjectsEntity { get; init; } = null!;
+    public ICollection<RolesEntity> RolesEntity { get; init; } = null!;
 
     [Required]
     [Column(TypeName = "nvarchar(50)")]

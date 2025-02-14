@@ -1,6 +1,5 @@
-﻿using System.Data.Common;
-using API.Helpers;
-using Core.DTOs.Project;
+﻿using API.Helpers;
+using API.Interfaces;
 using Core.DTOs.Project.Status;
 using Core.Interfaces.Project;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +13,14 @@ namespace API.Controllers;
 /// </summary>
 /// <param name="statusService"></param>
 /// <param name="environment"></param>
+/// <param name="commonHelpers"></param>
 [ApiController]
 [Route("api/[controller]")]
-public class StatusController(IStatusService statusService, IWebHostEnvironment environment)
-    : ControllerBase
+public class StatusController(
+    IStatusService statusService,
+    IWebHostEnvironment environment,
+    ICommonHelpers commonHelpers
+) : ControllerBase
 {
     /// <summary>
     /// Create a new status
@@ -25,9 +28,9 @@ public class StatusController(IStatusService statusService, IWebHostEnvironment 
     /// <param name="status">Status creation DTO</param>
     /// <returns>Created status</returns>
     [HttpPost]
-    [ProducesResponseType<StatusDisplay>(StatusCodes.Status201Created)]
+    [ProducesResponseType<StatusDisplayDto>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IResult> CreateStatusAsync([FromBody] StatusInsert status)
+    public async Task<IResult> CreateStatusAsync([FromBody] StatusInsertDto status)
     {
         try
         {
@@ -41,7 +44,7 @@ public class StatusController(IStatusService statusService, IWebHostEnvironment 
             );
         }
         // Catch duplicate key error
-        catch (DbUpdateException ex) when (IsDuplicateKeyError(ex))
+        catch (DbUpdateException ex) when (commonHelpers.IsDuplicateKeyError(ex))
         {
             // Return a conflict response
             return ApiResponseHelper.ConflictDuplicate("Status already exists");
@@ -79,16 +82,15 @@ public class StatusController(IStatusService statusService, IWebHostEnvironment 
         }
     }
 
-
     /// <summary>
     /// Updates a status
     /// </summary>
     /// <param name="status">Status creation DTO</param>
     /// <returns>Created status</returns>
     [HttpPut]
-    [ProducesResponseType<StatusDisplay>(StatusCodes.Status201Created)]
+    [ProducesResponseType<StatusDisplayDto>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IResult> UpdateStatus([FromBody] StatusUpdate status)
+    public async Task<IResult> UpdateStatus([FromBody] StatusUpdateDto status)
     {
         try
         {
@@ -108,7 +110,7 @@ public class StatusController(IStatusService statusService, IWebHostEnvironment 
             return ApiResponseHelper.NotFound(ex.Message);
         }
         // Catch duplicate key error
-        catch (DbUpdateException ex) when (IsDuplicateKeyError(ex))
+        catch (DbUpdateException ex) when (commonHelpers.IsDuplicateKeyError(ex))
         {
             // Return a conflict response
             return ApiResponseHelper.ConflictDuplicate("Status already exists");
@@ -148,27 +150,5 @@ public class StatusController(IStatusService statusService, IWebHostEnvironment 
             // Return a problem response
             return ApiResponseHelper.Problem(ex, environment.IsDevelopment());
         }
-    }
-
-
-
-
-
-
-
-
-
-    /// <summary>
-    ///  Check if the error is a duplicate key error
-    /// </summary>
-    /// <param name="ex"></param>
-    /// <returns></returns>
-    private static bool IsDuplicateKeyError(DbUpdateException ex)
-    {
-        // Check if the exception is a SqlException and if the error number is 2601 or 2627
-        // Why this numbers? Because they are the error numbers for duplicate key errors
-        // in Entity Framework Core
-        return ex.InnerException is SqlException sqlEx
-            && (sqlEx.Number == 2601 || sqlEx.Number == 2627);
     }
 }

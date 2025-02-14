@@ -1,9 +1,8 @@
 ﻿using System.Data.Common;
-using Core.DTOs.Project;
 using Core.DTOs.Project.Status;
 using Core.Interfaces.Data;
+using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
-using Domain;
 using Microsoft.Data.SqlClient;
 
 namespace Core.Services;
@@ -18,7 +17,7 @@ public class StatusService(
     /// Using AI Phind to create Summary
     /// Creates a new status entity in the database using DTO input
     /// </summary>
-    /// <param name="statusInsertDto">Data transfer object containing status properties</param>
+    /// <param name="statusInsertDtoDto">Data transfer object containing status properties</param>
     /// <exception cref="Exception">Thrown when database operations fail</exception>
     /// <remarks>
     /// Implements Unit of a Work pattern to ensure atomic operations:
@@ -29,12 +28,12 @@ public class StatusService(
     /// <seealso cref="https://medium.com/@josiahmahachi/how-to-use-iunitofwork-single-responsibility-principle-2821398addee"/>
     /// <seealso cref="https://stackoverflow.com/questions/28133801/entity-framework-6-async-operations-and-transcationscope"/>
     /// <seealso cref="https://learn.microsoft.com/en-us/dotnet/api/system.data.entity.infrastructure.dbupdateexception?view=entity-framework-6.2.0"/>
-    public async Task<StatusDisplay?> CreateStatusAsync(StatusInsert statusInsertDto)
+    public async Task<StatusDisplayDto?> CreateStatusAsync(StatusInsertDto statusInsertDtoDto)
     {
         try
         {
             // Convert the DTO to a domain object
-            var status = statusDtoFactory.ToDomain(statusInsertDto);
+            var statusInsert = statusDtoFactory.ToDomainStatusInsert(statusInsertDtoDto);
 
             #region BEGIN TRANSACTION
 
@@ -42,10 +41,7 @@ public class StatusService(
             await unitOfWork.BeginTransactionAsync();
 
             // Create the status in the database
-            await statusRepository.CreateAsync(status);
-
-            // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await statusRepository.CreateAsync(statusInsert);
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
@@ -55,11 +51,11 @@ public class StatusService(
             // Get the created status from the database, this is required to follow
             // restful API response 201 best practices
             var createdStatus =
-                await statusRepository.GetAsync(s => s!.Name == statusInsertDto.Name)
+                await statusRepository.GetAsync(s => s!.Name == statusInsertDtoDto.Name)
                 ?? throw new Exception("Could not find the created status in the database");
 
             // Return the created status as a display DTO
-            return statusDtoFactory.ToDisplayDto(createdStatus);
+            return statusDtoFactory.ToDtoStatusDisplay(createdStatus);
         }
         catch (DbException ex)
         {
@@ -70,7 +66,7 @@ public class StatusService(
             // Check if the exception is a duplicate key error
             if (ex is SqlException { Number: 2601 or 2627 })
             {
-                throw new Exception($"Status name '{statusInsertDto.Name}' already exists", ex);
+                throw new Exception($"Status name '{statusInsertDtoDto.Name}' already exists", ex);
             }
 
             // Throw an exception with a message
@@ -84,14 +80,14 @@ public class StatusService(
     /// <param name="id"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<StatusDisplay?> GetStatusByIdAsync(int id)
+    public async Task<StatusDisplayDto?> GetStatusByIdAsync(int id)
     {
         try
         {
             // Get the status from the database
             var status = await statusRepository.GetAsync(s => s!.Id == id);
             // Convert the status to a display DTO
-            return status != null ? statusDtoFactory.ToDisplayDto(status) : null;
+            return status != null ? statusDtoFactory.ToDtoStatusDisplay(status) : null;
         }
         catch (DbException ex)
         {
@@ -104,20 +100,20 @@ public class StatusService(
     /// <summary>
     /// Update a status in the database
     /// </summary>
-    /// <param name="statusUpdateDto"></param>
+    /// <param name="statusUpdateDtoDto"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<StatusDisplay> UpdateStatusAsync(StatusUpdate statusUpdateDto)
+    public async Task<StatusDisplayDto> UpdateStatusAsync(StatusUpdateDto statusUpdateDtoDto)
     {
         try
         {
             // Get the status from the database
             // https://stackoverflow.com/questions/606636/best-way-to-handle-a-keynotfoundexception
-            var status = await statusRepository.GetAsync(s => s!.Id == statusUpdateDto.Id)
-                         ?? throw new KeyNotFoundException($"Status with ID {statusUpdateDto.Id} not found");
+            var status = await statusRepository.GetAsync(s => s!.Id == statusUpdateDtoDto.Id)
+                         ?? throw new KeyNotFoundException($"Status with ID {statusUpdateDtoDto.Id} not found");
 
             // Update the status properties
-            status.Name = statusUpdateDto.Name;
+            status.Name = statusUpdateDtoDto.Name;
 
             #region BEGIN TRANSACTION
 
@@ -136,7 +132,7 @@ public class StatusService(
             #endregion END TRANSACTION
 
             // Return the updated status as a display DTO
-            return statusDtoFactory.ToDisplayDto(status)!;
+            return statusDtoFactory.ToDtoStatusDisplay(status)!;
         }
         catch (DbException ex)
         {
@@ -147,7 +143,7 @@ public class StatusService(
             // Check if the exception is a duplicate key error
             if (ex is SqlException { Number: 2601 or 2627 })
             {
-                throw new Exception($"Status name '{statusUpdateDto.Name}' already exists", ex);
+                throw new Exception($"Status name '{statusUpdateDtoDto.Name}' already exists", ex);
             }
 
             // Throw an exception with a message
@@ -155,7 +151,7 @@ public class StatusService(
         }
     }
 
-    public async Task<StatusDisplay> DeleteStatusAsync(int id)
+    public async Task<StatusDisplayDto> DeleteStatusAsync(int id)
     {
         try
         {
@@ -180,7 +176,7 @@ public class StatusService(
             #endregion END TRANSACTION
 
             // Return the deleted status as a display DTO
-            return statusDtoFactory.ToDisplayDto(status)!;
+            return statusDtoFactory.ToDtoStatusDisplay(status)!;
         }
         catch (DbException ex)
         {

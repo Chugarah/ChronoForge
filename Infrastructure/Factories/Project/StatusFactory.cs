@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using Core.Interfaces;
-using Core.Interfaces.Data;
-using Domain;
+﻿using Domain;
 using Infrastructure.Entities;
 
 namespace Infrastructure.Factories.Project;

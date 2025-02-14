@@ -72,16 +72,29 @@ public abstract class BaseRepository<TDomain, TEntity>(
     /// </remarks>
     public async Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> domainPredicate)
     {
+        return await GetAsync(domainPredicate, includes: null);
+    }
+
+    public async Task<TDomain?> GetAsync(
+        Expression<Func<TDomain?, bool>> domainPredicate,
+        params Expression<Func<TDomain, object>>[]? includes
+    )
+    {
         // Convert the domain predicate to an entity predicate
         var entityPredicate = factory.CreateEntityPredicate(domainPredicate);
 
-        // Get the entity from the DbSet
-        var entity = await _dbSet
-            .AsNoTracking()
-            .FirstOrDefaultAsync(entityPredicate);
+        // Start building the query
+        var query = _dbSet.AsNoTracking();
 
-        // Convert the entity back to a domain object
-        return entity != null ? factory.ToDomain(entity) : null;
+        if (includes != null)
+        {
+            query = includes
+                .Select(factory.CreateEntityInclude!)
+                .Aggregate(query, (current, entityInclude) => current.Include(entityInclude));
+        }
+
+        var entity = await query.FirstOrDefaultAsync(entityPredicate);
+        return entity == null ? null : factory.ToDomain(entity);
     }
 
     /// <summary>
@@ -117,5 +130,4 @@ public abstract class BaseRepository<TDomain, TEntity>(
         // Return the domain object
         return Task.FromResult(factory.ToDomain(entity));
     }
-
 }
