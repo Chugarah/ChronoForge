@@ -8,5 +8,5 @@ public interface IProjectService
     Task<ProjectShowDto?> GetProjectById(int id);
 
     Task<ProjectShowDto> UpdateProject(ProjectUpdateDto projectUpdateDto);
-    //   Task<ProjectShow> DeleteStatusAsync(int id);
+    Task<ProjectDeleteShowDto> DeleteProjectAsync(int id);
 }

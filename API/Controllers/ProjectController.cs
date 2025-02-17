@@ -122,4 +122,34 @@ public class ProjectController(
         }
     }
 
+    /// <summary>
+    /// Delete a project
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("{id:int}", Name = "DeleteProjectById")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteStatusAsync([FromRoute] int id)
+    {
+        try
+        {
+            // Delete the status
+            var deleteStatus = await projectService.DeleteProjectAsync(id);
+            // Return the status
+            return ApiResponseHelper.Success(deleteStatus);
+        }
+        // Catch if the status is not found
+        catch (KeyNotFoundException ex)
+        {
+            // Return 404 response if the status is not found
+            return ApiResponseHelper.NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            // Return a problem response
+            return ApiResponseHelper.Problem(ex, environment.IsDevelopment());
+        }
+    }
+
 }

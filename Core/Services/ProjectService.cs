@@ -47,7 +47,7 @@ public class ProjectService(
                 ) ?? null!;
 
             // Return the created project as a display DTO
-            return projectDtoFactory.ToDToProjectShow(createdProject);
+            return projectDtoFactory.ToDtoProjectShow(createdProject);
         }
         catch (Exception)
         {
@@ -67,7 +67,7 @@ public class ProjectService(
             );
 
             // Convert the project to a display DTO
-            return project != null ? projectDtoFactory.ToDToProjectShow(project) : null;
+            return project != null ? projectDtoFactory.ToDtoProjectShow(project) : null;
         }
         catch (DbException ex)
         {
@@ -109,7 +109,7 @@ public class ProjectService(
             #endregion END TRANSACTION
 
             // Return the updated project as a display DTO
-            return projectDtoFactory.ToDToProjectShow(project)!;
+            return projectDtoFactory.ToDtoProjectShow(project)!;
 
         }
         catch (DbException ex)
@@ -123,4 +123,40 @@ public class ProjectService(
 
     }
 
+    public async Task<ProjectDeleteShowDto> DeleteProjectAsync(int id)
+    {
+        try
+        {
+            // Get the status from the database
+            var projects = await projectRepository.GetAsync(s => s!.Id == id)
+                         ?? throw new KeyNotFoundException($"Project with ID {id} not found");
+
+            #region BEGIN TRANSACTION
+
+            // Begin Transaction to ensure that all operations are successful
+            await unitOfWork.BeginTransactionAsync();
+
+            // Delete the status in the database
+            await projectRepository.DeleteAsync(projects);
+
+            // Save the changes to the database
+            await unitOfWork.SaveChangesAsync();
+
+            // Commit the transaction to ensure that all operations are successful
+            await unitOfWork.CommitTransactionAsync();
+
+            #endregion END TRANSACTION
+
+            // Return the deleted status as a display DTO
+            return projectDtoFactory.ToDtoDeleteShow(projects)!;
+        }
+        catch (DbException ex)
+        {
+            // Rollback the transaction if an error occurs
+            await unitOfWork.RollbackTransactionAsync();
+
+            // Throw an exception with a message
+            throw new Exception("Could not delete the status in the database:", ex);
+        }
+    }
 }
