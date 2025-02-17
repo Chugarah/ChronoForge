@@ -32,6 +32,7 @@ public abstract class BaseRepository<TDomain, TEntity>(
     where TEntity : class
 {
     /// <summary>
+    /// Use Virtual to allow for overriding in derived classes
     /// Let's load in our DbSet
     /// This is the table that we will be working with, and it's using
     /// the TEntity that we have passed in as generic type
@@ -70,12 +71,12 @@ public abstract class BaseRepository<TDomain, TEntity>(
     /// AsNoTracking used for read-only operations
     /// Automatic predicate conversion maintains layer isolation
     /// </remarks>
-    public async Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> domainPredicate)
+    public virtual async Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> domainPredicate)
     {
         return await GetAsync(domainPredicate, includes: null);
     }
 
-    public async Task<TDomain?> GetAsync(
+    public virtual async Task<TDomain?> GetAsync(
         Expression<Func<TDomain?, bool>> domainPredicate,
         params Expression<Func<TDomain, object>>[]? includes
     )
@@ -102,7 +103,7 @@ public abstract class BaseRepository<TDomain, TEntity>(
     /// </summary>
     /// <param name="domainEntity"></param>
     /// <returns></returns>
-    public Task<TDomain?> UpdateAsync(TDomain? domainEntity)
+    public virtual Task<TDomain?> UpdateAsync(TDomain? domainEntity)
     {
         // Convert the domain object to an entity object
         var entity = factory.ToEntity(domainEntity);
@@ -119,7 +120,7 @@ public abstract class BaseRepository<TDomain, TEntity>(
     /// </summary>
     /// <param name="domainEntity"></param>
     /// <returns></returns>
-    public Task<TDomain?> DeleteAsync(TDomain? domainEntity)
+    public virtual Task<TDomain?> DeleteAsync(TDomain? domainEntity)
     {
         // Convert the domain object to an entity object
         var entity = factory.ToEntity(domainEntity);

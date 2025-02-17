@@ -79,4 +79,47 @@ public class ProjectController(
             return ApiResponseHelper.Problem(ex, environment.IsDevelopment());
         }
     }
+
+
+    /// <summary>
+    /// Update a project
+    /// </summary>
+    /// <returns></returns>
+    [HttpPut]
+    [ProducesResponseType<StatusDisplayDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType<StatusDisplayDto>(StatusCodes.Status404NotFound)]
+    public async Task<IResult> UpdateProject([FromBody] ProjectUpdateDto projectUpdateDto)
+    {
+        try
+        {
+            // Create the status
+            var displayDto = await projectService.UpdateProject(projectUpdateDto);
+            // Return a created response
+            return Results.CreatedAtRoute(
+                routeName: "GetProjectById",
+                routeValues: new { id = displayDto!.Id, displayDto },
+                value: displayDto
+            );
+        }
+        catch (DbUpdateException ex) when (commonHelpers.IsForeignKeyError(ex))
+        {
+            // Return a conflict response
+            return ApiResponseHelper.BadRequestWithMessage(
+                "Invalid Entity Reference",
+                "Referenced entity does not exist"
+            );
+        }
+        // Catch if the project is not found
+        catch (KeyNotFoundException ex)
+        {
+            // Return 404 response if the status is not found
+            return ApiResponseHelper.NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            // Return a problem response
+            return ApiResponseHelper.Problem(ex, environment.IsDevelopment());
+        }
+    }
+
 }

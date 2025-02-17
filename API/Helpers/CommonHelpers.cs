@@ -23,4 +23,18 @@ public class CommonHelpers : ICommonHelpers
         return ex.InnerException is SqlException sqlEx
                && (sqlEx.Number == 2601 || sqlEx.Number == 2627);
     }
+
+    /// <summary>
+    /// Check if the error is a foreign key error
+    /// </summary>
+    /// <param name="ex"></param>
+    /// <returns></returns>
+    public bool IsForeignKeyError(DbUpdateException ex)
+    {
+        // Check if the exception is a SqlException and if the error number is 547
+        // Why this number?
+        // Because it is the error number for foreign key constraint errors
+        // in Entity Framework Core
+        return ex.InnerException is SqlException { Number: 547 };
+    }
 }

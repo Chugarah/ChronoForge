@@ -12,8 +12,8 @@ public class UsersEntity
 {
     [Key]
     public int Id { get; init; }
-    public ICollection<ProjectsEntity> ProjectsEntity { get; init; } = null!;
-    public ICollection<RolesEntity> RolesEntity { get; init; } = null!;
+    public virtual ICollection<ProjectsEntity> ProjectsEntity { get; init; } = null!;
+    public virtual ICollection<RolesEntity> RolesEntity { get; init; } = null!;
 
     [Required]
     [Column(TypeName = "nvarchar(50)")]

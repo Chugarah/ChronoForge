@@ -13,6 +13,7 @@ public class ProjectDtoFactory : IProjectDtoFactory
             StatusId = createProjectDomain.StatusId,
             ProjectManager = createProjectDomain.ProjectManager,
             Title = createProjectDomain.Title,
+            Description = createProjectDomain.Description,
             StartDate = createProjectDomain.StartDate,
             EndDate = createProjectDomain.EndDate,
         };
@@ -21,11 +22,8 @@ public class ProjectDtoFactory : IProjectDtoFactory
         new()
         {
             Id = projects.Id,
-            Status = new StatusDisplayDto
-            {
-                Id = projects.Status!.Id,
-                Name = projects.Status.Name,
-            },
             Title = projects.Title,
+            StartDate = projects.StartDate,
+            EndDate = projects.EndDate,
         };
 }

@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Core.DTOs.Project;
+using Domain;
 using Infrastructure.Entities;
 
 namespace Infrastructure.Factories.Project;
@@ -12,21 +13,21 @@ public class ProjectFactory : EntityFactoryBase<Projects, ProjectsEntity>
     /// </summary>
     /// <param name="projectsEntity"></param>
     /// <returns></returns>
-    public override Projects ToDomain(ProjectsEntity projectsEntity) =>
-        new()
+    public override Projects ToDomain(ProjectsEntity projectsEntity)
+    {
+        // Inspired by Mikael :) This is for easier debugging
+        var projects = new Projects
         {
             Id = projectsEntity.Id,
             StatusId = projectsEntity.StatusId,
-            Status = new Status
-            {
-                Id = projectsEntity.StatusEntity.Id,
-                Name = projectsEntity.StatusEntity.Name
-            },
             ProjectManager = projectsEntity.ProjectManager,
             Title = projectsEntity.Title,
+            Description = projectsEntity.Description,
             StartDate = projectsEntity.StartDate,
             EndDate = projectsEntity.EndDate,
         };
+        return projects!;
+    }
 
     /// <summary>
     /// Creating from Domain object to Entity object
@@ -41,8 +42,8 @@ public class ProjectFactory : EntityFactoryBase<Projects, ProjectsEntity>
             StatusId = projects.StatusId,
             ProjectManager = projects.ProjectManager,
             Title = projects.Title,
+            Description = projects.Description,
             StartDate = projects.StartDate,
             EndDate = projects.EndDate,
         };
 }
-

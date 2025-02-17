@@ -7,11 +7,11 @@ public class Projects
     public int StatusId { get; set; }
     public Status Status { get; set; } = null!;
 
-    public int ProjectManager { get; init; }
-    public User Users { get; init; } = null!;
+    public int ProjectManager { get; set; }
+    public Users Users { get; set; } = null!;
 
-    public string Title { get; init; } = null!;
-    public string? Description { get; init; }
-    public DateOnly StartDate { get; init; }
-    public DateOnly EndDate { get; init; }
+    public string Title { get; set; } = null!;
+    public string? Description { get; set; }
+    public DateOnly StartDate { get; set; }
+    public DateOnly EndDate { get; set; }
 }

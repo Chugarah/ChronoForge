@@ -15,5 +15,5 @@ public class StatusEntity
     [Column(TypeName = "nvarchar(50)")]
     public string Name {get ; init;} = null!;
 
-    public ICollection<ProjectsEntity> ProjectsEntity { get; set; } = [];
+    public virtual ICollection<ProjectsEntity> ProjectsEntity { get; set; } = [];
 }

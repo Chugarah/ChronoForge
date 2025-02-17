@@ -1,6 +1,6 @@
 ﻿namespace Domain;
 
-public class User
+public class Users
 {
     public int Id { get; init; }
     public ICollection<Projects> Projects { get; set; } = [];
