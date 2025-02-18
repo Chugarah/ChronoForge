@@ -40,10 +40,12 @@ public static class DependencyInjection
         // Registering the repositories in DI container
         services.AddScoped<IStatusRepository, StatusRepository>();
         services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         // Registering the factories in DI container
         services.AddScoped<IEntityFactory<Status, StatusEntity>, StatusFactory>();
         services.AddScoped<IEntityFactory<Projects, ProjectsEntity>, ProjectFactory>();
+        services.AddScoped<IEntityFactory<Users, UsersEntity>, UserFactory>();
         // Got help from Phind AI to add this line regarding the UnitOfWork
         services.AddScoped<IUnitOfWork>(provider => new UnitOfWork(
             provider.GetRequiredService<DataContext>()

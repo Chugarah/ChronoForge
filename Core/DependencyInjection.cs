@@ -19,9 +19,11 @@ public static class DependencyInjection
         // Register domain services
         services.AddScoped<IStatusService, StatusService>();
         services.AddScoped<IProjectService, ProjectService>();
+        services.AddScoped<IUserService, UserService>();
         // Register factories
         services.AddScoped<IStatusDtoFactory, StatusDtoFactory>();
         services.AddScoped<IProjectDtoFactory, ProjectDtoFactory>();
+        services.AddScoped<IUserDtoFactory, UserDtoFactory>();
         return services;
     }
 }

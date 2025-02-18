@@ -80,6 +80,33 @@ public class ProjectController(
 
 
     /// <summary>
+    /// Get all projects
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet, Route("GetAllProjects")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> GetAllProjectsAsync()
+    {
+        try
+        {
+            // Get the projects from the database
+            var projects = await projectService.GetAllProjectsAsync();
+            // Return the projects
+            IEnumerable<ProjectShowDto> projectShowDos = projects.ToList();
+            return projectShowDos.Count() != 0
+                ? ApiResponseHelper.Success(projectShowDos)
+                : ApiResponseHelper.NotFound("No projects found");
+        }
+        catch (Exception ex)
+        {
+            // Return a problem response
+            return ApiResponseHelper.Problem(ex, environment.IsDevelopment());
+        }
+    }
+
+
+    /// <summary>
     /// Update a project
     /// </summary>
     /// <returns></returns>

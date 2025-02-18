@@ -7,6 +7,7 @@ public interface IProjectService
     Task<ProjectShowDto?> CreateProjectAsync(ProjectInsertDto projectInsertDto);
     Task<ProjectShowDto?> GetProjectByIdAsync(int id);
     Task<ProjectShowDto?> GetProjectByStatusAsync(int id);
+    Task<IEnumerable<ProjectShowDto>> GetAllProjectsAsync();
 
     Task<ProjectShowDto> UpdateProjectAsync(ProjectUpdateDto projectUpdateDto);
     Task<IEnumerable<ProjectShowDto>> UpdateProjectStatusAsync(int oldStatus);

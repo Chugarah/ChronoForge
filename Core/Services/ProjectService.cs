@@ -105,6 +105,24 @@ public class ProjectService(
         }
     }
 
+    public async Task<IEnumerable<ProjectShowDto>> GetAllProjectsAsync()
+    {
+        try
+        {
+            // Get all the projects from the database
+            var projects = await projectRepository.GetAllAsync(p => p != null);
+
+            // Convert the projects to a display DTO
+            return projectDtoFactory.ToDtoProjectShow(projects);
+        }
+        catch (DbException)
+        {
+            // Throw an exception with a message
+            return Enumerable.Empty<ProjectShowDto>();
+        }
+    }
+
+
     /// <summary>
     /// Update a project in the database
     /// </summary>

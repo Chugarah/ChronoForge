@@ -2,9 +2,12 @@
 
 namespace Core.DTOs.Project;
 
-public class ProjectUpdateDto
+public class ProjectUpdateDto(int id)
 {
-    public int Id { get; set; }
+    // Decided to initialize the ID in the constructor
+    // to avoid touching the ID in the update method
+    public int Id { get;} = id;
+
     [Required]
     public int StatusId { get; set; }
     [Required]
