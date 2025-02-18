@@ -1,5 +1,5 @@
-import ButtonForm from "@/components/forms/ButtonForm";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import ButtonForm from "@components/forms/ButtonForm";
+import { Icons } from "@/lib/icons";
 import Image from "next/image";
 
 function FaqSocials() {
@@ -24,7 +24,7 @@ function FaqSocials() {
 				<p>Still have questions?</p>
 				<ButtonForm
 					variant="link"
-					icon={faArrowRight}
+					icon={Icons.arrowRight}
 					iconClassName="faq__faq-contact__contact-card--color-primary"
 					className="faq__faq-contact__contact-card--color-primary"
 					iconPosition="right"
@@ -43,7 +43,7 @@ function FaqSocials() {
 				<p>Still have questions?</p>
 				<ButtonForm
 					variant="link"
-					icon={faArrowRight}
+					icon={Icons.arrowRight}
 					className="faq__faq-contact__contact-card--color-green"
 					iconPosition="right"
 				>
