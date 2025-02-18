@@ -3,6 +3,7 @@
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -18,8 +19,25 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./app/*"],
+      "@components/*": ["./app/components/*"],
+      "@ui/*": ["./app/components/ui/*"],
+      "@common/*": ["./app/components/common/*"],
+      "@forms/*": ["./app/components/forms/*"],
+      "@lib/*": ["./app/lib/*"],
+      "@api/*": ["./app/api/*"],
+      "@hooks/*": ["./app/hooks/*"],
+      "@contexts/*": ["./app/contexts/*"],
+      "@styles/*": ["./app/styles/*"],
+      "@root/*": ["./app/(root)/*"],
+      "@validation/*": ["./app/lib/validation/*"],
+      "@types": ["./app/types"],
+      "@types/*": ["./app/types/*"],
+      "@api-types/*": ["./app/types/api/*"],
+      "@form-types/*": ["./app/types/forms/*"],
+      "@theme-types/*": ["./app/types/theme/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
