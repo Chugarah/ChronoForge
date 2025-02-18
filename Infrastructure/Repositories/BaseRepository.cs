@@ -62,6 +62,7 @@ public abstract class BaseRepository<TDomain, TEntity>(
     }
 
     /// <summary>
+    /// The Code was Inspired by Hans and refactored by Phind AI
     /// Retrieves a single domain entity using type-safe domain predicates
     /// Flow: Domain Predicate → Entity Predicate Conversion → Database Query → Domain Object
     /// </summary>
@@ -76,8 +77,63 @@ public abstract class BaseRepository<TDomain, TEntity>(
         return await GetAsync(domainPredicate, includes: null);
     }
 
+    /// <summary>
+    /// The Code was Inspired by Hans and refactored by Phind AI
+    /// Retrieves all domain entities using type-safe domain predicates, working as GetAsync
+    /// but returning a list of entities instead of a single entity.
+    /// Therefore, to make it optional,
+    /// they need to change the parameter to be nullable and provide a default value of null.
+    /// However, in C#, you can't have default values for Expression parameters.
+    /// So the alternative is to create an overload that doesn't take the
+    /// predicate and calls the existing method with a null predicate.
+    /// </summary>
+    /// <returns></returns>
+    public virtual async Task<IEnumerable<TDomain?>> GetAllAsync(Expression<Func<TDomain?, bool>> domainPredicate)
+    {
+        return await GetAllAsync(domainPredicate, includes: null);
+    }
+
+    /// <summary>
+    /// Retrieves a single domain entity using type-safe domain predicates
+    /// </summary>
+    /// <param name="domainPredicate"></param>
+    /// <param name="includes"></param>
+    /// <returns></returns>
     public virtual async Task<TDomain?> GetAsync(
         Expression<Func<TDomain?, bool>> domainPredicate,
+        params Expression<Func<TDomain, object>>[]? includes
+    )
+    {
+        // Convert domain predicate to entity predicate
+        var entityPredicate = factory.CreateEntityPredicate(domainPredicate);
+        // Start building the query
+        var query = _dbSet.AsNoTracking();
+
+        // Check if includes are provided
+        if (includes != null)
+        {
+            // Include related entities
+            query = includes
+                .Select(factory.CreateEntityInclude!)
+                .Aggregate(query, (current, entityInclude) => current.Include(entityInclude));
+        }
+
+        // Apply the entity predicate and get the first entity
+        var entity = await query.FirstOrDefaultAsync(entityPredicate);
+        // Return the domain object using the factory
+        return entity != null ? factory.ToDomain(entity) : null;
+    }
+
+    /// <summary>
+    /// Retrieves all domain entities using type-safe domain predicates
+    /// The Difference between GetAsync and GetAllAsync is that GetAllAsync returns a list of entities
+    /// This code is inspired by Hans and refactored by Phind AI
+    /// </summary>
+    /// <param name="domainPredicate"></param>
+    /// <param name="includes"></param>
+    /// <returns></returns>
+    private async Task<IEnumerable<TDomain>> GetAllAsync(
+        Expression<Func<TDomain?, bool>>? domainPredicate = null,
         params Expression<Func<TDomain, object>>[]? includes
     )
     {
@@ -87,15 +143,22 @@ public abstract class BaseRepository<TDomain, TEntity>(
         // Start building the query
         var query = _dbSet.AsNoTracking();
 
+        // Apply the entity predicate
+        query = query.Where(entityPredicate);
+
+        // Check if includes are provided
         if (includes != null)
         {
+            // Include related entities
             query = includes
                 .Select(factory.CreateEntityInclude!)
                 .Aggregate(query, (current, entityInclude) => current.Include(entityInclude));
         }
 
-        var entity = await query.FirstOrDefaultAsync(entityPredicate);
-        return entity == null ? null : factory.ToDomain(entity);
+        // Get all entities that match the predicate
+        var entity = await query.ToListAsync();
+        // Got Partial help from Phind AI to finish this Line
+        return entity.Select(e => factory.ToDomain(e)!);
     }
 
     /// <summary>

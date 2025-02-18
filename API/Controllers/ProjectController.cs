@@ -1,10 +1,8 @@
-﻿using System.Data.Common;
-using API.Helpers;
+﻿using API.Helpers;
 using API.Interfaces;
 using Core.DTOs.Project;
 using Core.DTOs.Project.Status;
 using Core.Interfaces.Project;
-using Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -67,7 +65,7 @@ public class ProjectController(
         try
         {
             // Get the status from the database
-            var status = await projectService.GetProjectById(id);
+            var status = await projectService.GetProjectByIdAsync(id);
             // Return the status
             return status != null
                 ? ApiResponseHelper.Success(status)
@@ -93,7 +91,7 @@ public class ProjectController(
         try
         {
             // Create the status
-            var displayDto = await projectService.UpdateProject(projectUpdateDto);
+            var displayDto = await projectService.UpdateProjectAsync(projectUpdateDto);
             // Return a created response
             return Results.CreatedAtRoute(
                 routeName: "GetProjectById",
@@ -130,7 +128,7 @@ public class ProjectController(
     [HttpDelete("{id:int}", Name = "DeleteProjectById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteStatusAsync([FromRoute] int id)
+    public async Task<IResult> DeleteProjectAsync([FromRoute] int id)
     {
         try
         {

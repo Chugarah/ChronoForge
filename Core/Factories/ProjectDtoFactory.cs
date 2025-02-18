@@ -1,4 +1,5 @@
-﻿using Core.DTOs.Project;
+﻿using System.Collections;
+using Core.DTOs.Project;
 using Core.DTOs.Project.Status;
 using Core.Interfaces.DTos;
 using Domain;
@@ -18,6 +19,13 @@ public class ProjectDtoFactory : IProjectDtoFactory
             EndDate = createProjectDomain.EndDate,
         };
 
+
+    /// <summary>
+    /// This method is used to convert the Projects to ProjectShowDto
+    /// and returns a single ProjectShowDto
+    /// </summary>
+    /// <param name="projects"></param>
+    /// <returns></returns>
     public ProjectShowDto? ToDtoProjectShow(Projects projects) =>
         new()
         {
@@ -28,14 +36,27 @@ public class ProjectDtoFactory : IProjectDtoFactory
         };
 
     /// <summary>
+    /// This multiple ProjectShowDto (collection)
+    /// Need extra help from AI to refactor this method to use IEnumerable so we
+    /// can use LINQ to convert the Projects to ProjectShowDto
+    /// </summary>
+    /// <param name="projects"></param>
+    /// <returns></returns>
+    public IEnumerable<ProjectShowDto> ToDtoProjectShow(IEnumerable<Projects?> projects) =>
+        // Using LINQ to convert the Projects to ProjectShowDto
+        projects.Select(p => new ProjectShowDto
+        {
+            Id = p!.Id,
+            Title = p.Title,
+            StartDate = p.StartDate,
+            EndDate = p.EndDate,
+        });
+
+    /// <summary>
     /// This method is used to convert the Projects to ProjectDeleteShow
     /// </summary>
     /// <param name="projects"></param>
     /// <returns></returns>
     public ProjectDeleteShowDto? ToDtoDeleteShow(Projects projects) =>
-        new()
-        {
-            Id = projects.Id,
-            Title = projects.Title
-        };
+        new() { Id = projects.Id, Title = projects.Title };
 }

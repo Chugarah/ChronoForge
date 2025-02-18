@@ -5,8 +5,10 @@ namespace Core.Interfaces.Project;
 public interface IProjectService
 {
     Task<ProjectShowDto?> CreateProjectAsync(ProjectInsertDto projectInsertDto);
-    Task<ProjectShowDto?> GetProjectById(int id);
+    Task<ProjectShowDto?> GetProjectByIdAsync(int id);
+    Task<ProjectShowDto?> GetProjectByStatusAsync(int id);
 
-    Task<ProjectShowDto> UpdateProject(ProjectUpdateDto projectUpdateDto);
+    Task<ProjectShowDto> UpdateProjectAsync(ProjectUpdateDto projectUpdateDto);
+    Task<IEnumerable<ProjectShowDto>> UpdateProjectStatusAsync(int oldStatus);
     Task<ProjectDeleteShowDto> DeleteProjectAsync(int id);
 }

@@ -76,16 +76,22 @@ public class EntityFactoryBase<TDomain, TEntity> : IEntityFactory<TDomain, TEnti
     /// Uses expression tree visitor pattern for parameter type substitution
     /// </remarks>
     public Expression<Func<TEntity, bool>> CreateEntityPredicate(
-        Expression<Func<TDomain, bool>> domainPredicate
+        Expression<Func<TDomain, bool>>? domainPredicate
     )
     {
+        // Create a new parameter for the entity type
+        // Now it handles nullable predicates, gives us
+        // return all when no filter is provided
         var parameter = Expression.Parameter(typeof(TEntity), "entity");
+        // If the domain predicate is null, return null
+        if (domainPredicate == null) return e => true;
         var visitor = new ParameterTypeVisitor<TDomain, TEntity>(
             domainPredicate.Parameters[0],
             parameter
         );
         var body = visitor.Visit(domainPredicate.Body);
         return Expression.Lambda<Func<TEntity, bool>>(body, parameter);
+
     }
 
     /// <summary>

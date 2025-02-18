@@ -3,6 +3,7 @@ using Core.DTOs.Project.Status;
 using Core.Interfaces.Data;
 using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
+using Domain.Constants;
 using Microsoft.Data.SqlClient;
 
 namespace Core.Services;
@@ -10,7 +11,8 @@ namespace Core.Services;
 public class StatusService(
     IStatusRepository statusRepository,
     IStatusDtoFactory statusDtoFactory,
-    IUnitOfWork unitOfWork
+    IUnitOfWork unitOfWork,
+    IProjectService projectService
 ) : IStatusService
 {
     /// <summary>
@@ -50,12 +52,12 @@ public class StatusService(
 
             // Get the created status from the database, this is required to follow
             // restful API response 201 best practices
-            var createdStatus =
+            var deletedStatus =
                 await statusRepository.GetAsync(s => s!.Name == statusInsertDtoDto.Name)
                 ?? throw new Exception("Could not find the created status in the database");
 
             // Return the created status as a display DTO
-            return statusDtoFactory.ToDtoStatusDisplay(createdStatus);
+            return statusDtoFactory.ToDtoStatusDisplay(deletedStatus);
         }
         catch (DbException ex)
         {
@@ -96,7 +98,6 @@ public class StatusService(
         }
     }
 
-
     /// <summary>
     /// Update a status in the database
     /// </summary>
@@ -109,8 +110,11 @@ public class StatusService(
         {
             // Get the status from the database
             // https://stackoverflow.com/questions/606636/best-way-to-handle-a-keynotfoundexception
-            var status = await statusRepository.GetAsync(s => s!.Id == statusUpdateDtoDto.Id)
-                         ?? throw new KeyNotFoundException($"Status with ID {statusUpdateDtoDto.Id} not found");
+            var status =
+                await statusRepository.GetAsync(s => s!.Id == statusUpdateDtoDto.Id)
+                ?? throw new KeyNotFoundException(
+                    $"Status with ID {statusUpdateDtoDto.Id} not found"
+                );
 
             // Update the status properties
             status.Name = statusUpdateDtoDto.Name;
@@ -156,13 +160,33 @@ public class StatusService(
         try
         {
             // Get the status from the database
-            var status = await statusRepository.GetAsync(s => s!.Id == id)
-                         ?? throw new KeyNotFoundException($"Status with ID {id} not found");
+            var status =
+                await statusRepository.GetAsync(s => s!.Id == id)
+                ?? throw new KeyNotFoundException($"Status with ID {id} not found");
+
+            // Check if the status is the default status, we cannot delete the default status
+            if (id == 1)
+            {
+                // Throw an exception if the status is the default status
+                throw new Exception("Cannot delete the default status");
+            }
 
             #region BEGIN TRANSACTION
 
             // Begin Transaction to ensure that all operations are successful
             await unitOfWork.BeginTransactionAsync();
+
+            // Get the project by status
+            var projectStatus = await projectService.GetProjectByStatusAsync(id);
+            // Check if the project status is not null
+            if (projectStatus != null)
+            {
+                // Update the project status to the default status if you have a project with the status
+                // that we want to delete
+                var updateProjectStatus = await projectService.UpdateProjectStatusAsync(
+                    id
+                );
+            }
 
             // Delete the status in the database
             await statusRepository.DeleteAsync(status);
