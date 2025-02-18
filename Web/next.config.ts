@@ -1,7 +1,21 @@
-import type { NextConfig } from "next";
+import withBundleAnalyzer from "@next/bundle-analyzer"
+import type { NextConfig } from "next"
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+import { env } from "./env.mjs"
 
-export default nextConfig;
+const config: NextConfig = {
+  reactStrictMode: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+  rewrites: async () => [
+    { source: "/healthz", destination: "/api/health" },
+    { source: "/api/healthz", destination: "/api/health" },
+    { source: "/health", destination: "/api/health" },
+    { source: "/ping", destination: "/api/health" },
+  ],
+}
+
+export default env.ANALYZE ? withBundleAnalyzer({ enabled: env.ANALYZE })(config) : config
