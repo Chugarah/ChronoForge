@@ -1,26 +1,597 @@
-@import "tailwindcss/preflight";
+@import "tailwindcss";
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+/* Theme Variables */
+:root {
+  /* Container */
+  --container-width: 1400px;
+  --container-width-sm: 640px;
+  --container-width-md: 768px;
+  --container-width-lg: 1024px;
+  --container-width-xl: 1280px;
+  --container-width-2xl: 1400px;
 
-  .dark {
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Spacing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-32: 8rem;
+  --spacing-40: 10rem;
+  --spacing-48: 12rem;
+  --spacing-56: 14rem;
+  --spacing-64: 16rem;
+  --spacing-72: 18rem;
+  --spacing-80: 20rem;
+  --spacing-96: 24rem;
+  
+  /* Main background - Linear's signature dark theme */
+  --background: 229 20% 10%;      /* Linear's dark canvas */
+  --foreground: 210 40% 98%;      /* Clean, crisp white text */
+  
+  /* Card colors */
+  --card: 229 20% 13%;            /* Slightly elevated surface */
+  --card-foreground: 210 40% 98%;
+  
+  /* Popover colors */
+  --popover: 229 20% 13%;
+  --popover-foreground: 210 40% 98%;
+  
+  /* Primary colors */
+  --primary: 242 49% 65%;         /* Linear's signature purple */
+  --primary-foreground: 210 40% 98%;
+  
+  /* Secondary colors */
+  --secondary: 229 20% 15%;       /* Subtle elevation */
+  --secondary-foreground: 210 40% 98%;
+  
+  /* Muted colors */
+  --muted: 229 20% 15%;
+  --muted-foreground: 215 20% 65%;  /* Secondary text */
+  
+  /* Accent colors */
+  --accent: 242 49% 65%;
+  --accent-foreground: 210 40% 98%;
+  
+  /* Destructive colors */
+  --destructive: 0 84% 60%;       /* Linear's error red */
+  --destructive-foreground: 210 40% 98%;
+  
+  /* Border and input colors */
+  --border: 229 20% 20%;          /* Subtle borders */
+  --input: 229 20% 13%;
+  --ring: 242 49% 65%;
+  
+  --radius: 0.5rem;
+
+  /* Typography */
+  --font-2xs: 0.625rem;
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+  --font-4xl: 2.25rem;
+  --font-5xl: 3rem;
+  --font-6xl: 4rem;
+
+  /* Letter Spacing */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+
+  /* Line Heights */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+
+  /* Transitions */
+  --transition-75: 75ms;
+  --transition-100: 100ms;
+  --transition-150: 150ms;
+  --transition-200: 200ms;
+  --transition-300: 300ms;
+  --transition-500: 500ms;
+  --transition-700: 700ms;
+  --transition-1000: 1000ms;
+
+  /* Z-index */
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-auto: auto;
+
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Status Colors */
+  --warning: 38 92% 50%;          /* Linear's warning amber */
+  --success: 142 72% 29%;         /* Linear's success green */
+
+  /* Table specific colors */
+  --table-row-default: var(--background);
+  --table-row-hover: 229 20% 13%;
+  --table-row-selected: 229 20% 15%;
+  
+  --table-header-bg: 229 20% 11%;
+  --table-header-text: var(--foreground);
+  --table-header-muted: var(--muted-foreground);
+  
+  --table-search-bg: 229 20% 13%;
+  --table-search-border: var(--border);
+  --table-search-ring: var(--ring);
+  
+  --table-text-primary: var(--foreground);
+  --table-text-secondary: var(--muted-foreground);
+  
+  --table-border: var(--border);
+  
+  /* Status indicators */
+  --status-blue: var(--primary);
+  --status-purple: var(--accent);
+  --status-pink: var(--destructive);
+  --status-yellow: var(--warning);
+  --status-green: var(--success);
+  --status-orange: var(--warning);
+}
+
+.dark {
+  /* Linear's signature dark theme colors */
+  --background: 229 20% 8%;       /* Deeper dark background for better contrast */
+  --foreground: 210 40% 98%;      /* Crisp white text */
+  
+  /* Card and elevated surfaces */
+  --card: 229 20% 11%;            /* Subtle elevation for cards */
+  --card-foreground: 210 40% 98%;
+  
+  /* Popover surfaces */
+  --popover: 229 20% 11%;
+  --popover-foreground: 210 40% 98%;
+  
+  /* Primary accent colors */
+  --primary: 242 49% 65%;         /* Linear's iconic purple */
+  --primary-foreground: 210 40% 98%;
+  
+  /* Secondary surfaces */
+  --secondary: 229 20% 13%;       /* Slightly elevated surfaces */
+  --secondary-foreground: 210 40% 98%;
+  
+  /* Muted elements */
+  --muted: 229 20% 13%;
+  --muted-foreground: 215 20% 65%; /* Softer secondary text */
+  
+  /* Accent colors */
+  --accent: 242 49% 65%;          /* Matching primary for consistency */
+  --accent-foreground: 210 40% 98%;
+  
+  /* Destructive actions */
+  --destructive: 0 84% 60%;       /* Clear error state red */
+  --destructive-foreground: 210 40% 98%;
+  
+  /* Subtle borders and inputs */
+  --border: 229 20% 15%;          /* Softer borders for dark mode */
+  --input: 229 20% 11%;           /* Matching card background */
+  --ring: 242 49% 65%;            /* Focus ring matches primary */
+}
+
+/* Base styles */
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  font-variation-settings: "opsz" 32;
+}
+
+/* Additional styles for better readability */
+[class*="bg-white"] {
+  background-color: hsl(var(--background));
+}
+
+a {
+  color: hsl(var(--primary));
+}
+
+a:hover {
+  color: hsl(var(--primary) / 0.9);
+}
+
+/* Linear-style typography */
+h1, h2, h3, h4, h5, h6 {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  font-size: 2.25rem;
+  letter-spacing: -0.03em;
+}
+
+h3 {
+  font-size: 1.875rem;
+  letter-spacing: -0.02em;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+h6 {
+  font-size: 1.125rem;
+}
+
+p, li {
+  color: hsl(var(--muted-foreground));
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Linear-specific utility classes */
+.bg-theme {
+  background-color: hsl(var(--background));
+}
+
+.bg-theme-secondary {
+  background-color: hsl(var(--secondary));
+}
+
+.bg-theme-elevated {
+  background-color: hsl(var(--card));
+}
+
+.text-theme {
+  color: hsl(var(--foreground));
+}
+
+.text-theme-muted {
+  color: hsl(var(--muted-foreground));
+}
+
+.text-theme-primary {
+  color: hsl(var(--primary));
+}
+
+/* Linear-style hover effects */
+.hover-elevated {
+  transition: all 0.2s ease;
+}
+
+.hover-elevated:hover {
+  background-color: hsl(var(--secondary));
+}
+
+/* Linear-style text selection */
+::selection {
+  background-color: hsl(var(--primary) / 0.2);
+  color: hsl(var(--primary));
+}
+
+/* Additional styles for better dark mode readability */
+.dark [class*="bg-white"] {
+  background-color: hsl(var(--background));
+}
+
+.dark a {
+  color: hsl(var(--primary));
+}
+
+.dark a:hover {
+  color: hsl(var(--primary) / 0.9);
+}
+
+/* Linear-style typography with dark mode optimizations */
+.dark p, 
+.dark li {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+.dark h1, 
+.dark h2, 
+.dark h3, 
+.dark h4, 
+.dark h5, 
+.dark h6 {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Linear-style hover effects with dark mode enhancements */
+.dark .hover-elevated {
+  transition: all 0.2s ease;
+}
+
+.dark .hover-elevated:hover {
+  background-color: hsl(var(--secondary));
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Dark mode specific shadows */
+.dark .shadow-subtle {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Dark mode card hover effect */
+.dark .card-hover {
+  transition: all 0.2s ease;
+}
+
+.dark .card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Linear-style Data Table */
+.datatable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--font-sm);
+}
+
+/* Header */
+.datatable thead {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-10);
+  background-color: hsl(var(--table-header-bg));
+  border-bottom: 1px solid hsl(var(--table-border));
+  backdrop-filter: blur(4px);
+}
+
+.datatable th {
+  height: 40px;
+  padding: 0 var(--spacing-4);
+  color: hsl(var(--table-header-muted));
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  transition: color var(--transition-150) ease;
+  user-select: none;
+}
+
+.datatable th:hover {
+  color: hsl(var(--table-header-text));
+}
+
+/* Body */
+.datatable tbody tr {
+  background-color: hsl(var(--table-row-default));
+  border-bottom: 1px solid hsl(var(--table-border));
+  transition: all var(--transition-150) ease;
+}
+
+.datatable tbody tr:hover {
+  background-color: hsl(var(--table-row-hover));
+}
+
+.datatable tbody tr.selected {
+  background-color: hsl(var(--table-row-selected));
+}
+
+.datatable td {
+  height: 48px;
+  padding: 0 var(--spacing-4);
+  color: hsl(var(--table-text-primary));
+  vertical-align: middle;
+}
+
+.datatable td.secondary {
+  color: hsl(var(--table-text-secondary));
+}
+
+/* Search and Filters */
+.datatable-search {
+  height: 32px;
+  padding: 0 var(--spacing-3);
+  background-color: hsl(var(--table-search-bg));
+  border: 1px solid hsl(var(--table-search-border));
+  border-radius: var(--radius-md);
+  color: hsl(var(--table-text-primary));
+  font-size: var(--font-sm);
+  transition: all var(--transition-150) ease;
+}
+
+.datatable-search:focus {
+  outline: none;
+  border-color: hsl(var(--table-search-ring));
+  ring: 2px solid hsl(var(--table-search-ring));
+}
+
+.datatable-search::placeholder {
+  color: hsl(var(--table-text-secondary));
+}
+
+/* Status Indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.blue { background-color: hsl(var(--status-blue)); }
+.status-dot.purple { background-color: hsl(var(--status-purple)); }
+.status-dot.pink { background-color: hsl(var(--status-pink)); }
+.status-dot.yellow { background-color: hsl(var(--status-yellow)); }
+.status-dot.green { background-color: hsl(var(--status-green)); }
+.status-dot.orange { background-color: hsl(var(--status-orange)); }
+
+/* Column Headers */
+.datatable-column-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.datatable-sort-icon {
+  width: 16px;
+  height: 16px;
+  color: hsl(var(--table-text-secondary));
+  opacity: 0;
+  transition: all var(--transition-150) ease;
+}
+
+.datatable th:hover .datatable-sort-icon {
+  opacity: 1;
+}
+
+.datatable th[aria-sort="ascending"] .datatable-sort-icon,
+.datatable th[aria-sort="descending"] .datatable-sort-icon {
+  opacity: 1;
+  color: hsl(var(--table-text-primary));
+}
+
+/* Empty State */
+.datatable-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-16);
+  color: hsl(var(--table-text-secondary));
+  text-align: center;
+}
+
+.datatable-empty-icon {
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  margin-bottom: var(--spacing-4);
+  opacity: 0.5;
+}
+
+/* Loading State */
+.datatable-loading {
+  position: relative;
+}
+
+.datatable-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--table-row-hover)),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
   }
+}
+
+/* Pagination */
+.datatable-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4);
+  background-color: hsl(var(--table-header-bg));
+  border-top: 1px solid hsl(var(--table-border));
+}
+
+.datatable-pagination-info {
+  color: hsl(var(--table-text-secondary));
+  font-size: var(--font-sm);
+}
+
+.datatable-pagination-actions {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+/* Selection Checkbox */
+.datatable-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid hsl(var(--table-border));
+  background-color: transparent;
+  transition: all var(--transition-150) ease;
+}
+
+.datatable-checkbox:checked {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+/* Actions Column */
+.datatable-actions {
+  opacity: 0;
+  transition: opacity var(--transition-150) ease;
+}
+
+.datatable tr:hover .datatable-actions {
+  opacity: 1;
 } 

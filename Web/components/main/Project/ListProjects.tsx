@@ -2,10 +2,10 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
-import { itemKeys, useProjectsAndStatus } from "@/lib/hooks/use-items";
+import { itemKeys, useProjectsAndStatus } from "@/lib/hooks/items";
 import type { Project } from "@/types/api.types";
-import { ProjectDetailsDialog } from "./Project/ProjectDetailsDialog";
-import { ProjectTable } from "./Project/ProjectTable";
+import { ProjectDetailsDialog } from "./ProjectDetailsDialog";
+import { ProjectTable } from "./ProjectTable";
 
 const ListProjects = () => {
 	const queryClient = useQueryClient();
@@ -19,15 +19,18 @@ const ListProjects = () => {
 		hasNextPage,
 		isFetchingNextPage
 	} = useProjectsAndStatus(1, 10, {
-		strategy: 'parallel' // Explicitly set parallel strategy for main list
+		strategy: 'parallel' // Use parallel for better performance in list view
 	});
 
-	const projectsData = (projects.data?.pages.flatMap(page => 
+	// Ensure we properly map projects with their statuses
+	const projectsData = projects.data?.pages.flatMap(page => 
 		page.items.map(item => ({
 			...item,
+			// Status is already attached by useProjectsAndStatus
 			status: item.status || null
 		}))
-	) ?? []) as Project[];
+	) ?? [];
+
 	const totalPages = projects.data?.pages[0]?.totalPages ?? 0;
 
 	const handlePaginationChange = () => {
@@ -58,6 +61,21 @@ const ListProjects = () => {
 		}
 	};
 
+	if (isError) {
+		return (
+			<div className="flex flex-col items-center justify-center p-4">
+				<p className="text-red-500">Error loading projects</p>
+				<button 
+					onClick={handleRefresh}
+					type="button"
+					className="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+				>
+					Retry
+				</button>
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex flex-col flex-1">
 			{/* Main Content */}
@@ -87,4 +105,4 @@ const ListProjects = () => {
 	);
 };
 
-export default ListProjects; 
+export default ListProjects;
