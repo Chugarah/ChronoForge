@@ -38,6 +38,7 @@ interface DataTableProps<TData, TValue> {
 	pageCount: number;
 	onPaginationChange?: (page: number) => void;
 	onRowClick?: (id: number) => void;
+	onRefresh?: () => Promise<void>;
 }
 
 export function DataTable<TData extends { id: number }, TValue>({
@@ -48,6 +49,7 @@ export function DataTable<TData extends { id: number }, TValue>({
 	pageCount,
 	onPaginationChange,
 	onRowClick,
+	onRefresh,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -55,7 +57,6 @@ export function DataTable<TData extends { id: number }, TValue>({
 	);
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({});
-	const [rowSelection, setRowSelection] = React.useState({});
 	const { ref, inView } = useInView();
 
 	React.useEffect(() => {
@@ -72,13 +73,13 @@ export function DataTable<TData extends { id: number }, TValue>({
 			sorting,
 			columnFilters,
 			columnVisibility,
-			rowSelection,
 		},
-		enableRowSelection: true,
+		enableRowSelection: false,
+		enableMultiRowSelection: false,
+		enableSubRowSelection: false,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
 		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
@@ -132,7 +133,7 @@ export function DataTable<TData extends { id: number }, TValue>({
 
 	return (
 		<div className="space-y-2.5">
-			<DataTableToolbar table={table} />
+			<DataTableToolbar table={table} onRefresh={onRefresh} isLoading={isLoading} />
 			<div className="relative overflow-hidden border-table-border">
 				{/* This is the overlay that appears when the data is loading */}
 				<AnimatePresence mode="wait">
@@ -190,9 +191,8 @@ export function DataTable<TData extends { id: number }, TValue>({
 								table.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
-										data-state={row.getIsSelected() && "selected"}
 										onClick={() => onRowClick?.(row.original.id)}
-										className="cursor-pointer"
+										className="cursor-pointer hover:bg-[hsl(var(--table-row-hover))]"
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id}>

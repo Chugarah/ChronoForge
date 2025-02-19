@@ -73,6 +73,7 @@ export const fetchDataItems = cache(async <T>(
     if (!data || !Array.isArray(data)) {
       const emptyResponse: PaginatedResponse<T> = {
         items: [],
+        totalItems: 0,
         total: 0,
         page: page,
         pageSize: pageSize,
@@ -83,13 +84,15 @@ export const fetchDataItems = cache(async <T>(
     
     // Convert array response to paginated format
     const items = data as T[]
-    const total = items.length
-    const totalPages = Math.ceil(total / pageSize)
+    const totalItems = items.length
+    const total = totalItems // For backward compatibility
+    const totalPages = Math.ceil(totalItems / pageSize)
     const start = (page - 1) * pageSize
     const end = start + pageSize
     
     return {
       items: items.slice(start, end),
+      totalItems,
       total,
       page,
       pageSize,

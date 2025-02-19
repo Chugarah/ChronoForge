@@ -1,6 +1,6 @@
 import type { FC } from 'react';
+import ListProjects from "@/components/main/Project/ListProjects";
 import AppDescription from "components/main/AppDescription";
-import ListProjects from "components/main/ListProjects";
 
 /**
  * HomePage component that serves as the main landing page of the application.
