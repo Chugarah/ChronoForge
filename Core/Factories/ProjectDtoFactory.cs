@@ -31,6 +31,9 @@ public class ProjectDtoFactory : IProjectDtoFactory
         {
             Id = projects.Id,
             Title = projects.Title,
+            ProjectManager = projects.ProjectManager,
+            StatusId = projects.StatusId,
+            Description = projects.Description,
             StartDate = projects.StartDate,
             EndDate = projects.EndDate,
         };
@@ -48,6 +51,9 @@ public class ProjectDtoFactory : IProjectDtoFactory
         {
             Id = p!.Id,
             Title = p.Title,
+            StatusId = p.StatusId,
+            ProjectManager = p.ProjectManager,
+            Description = p.Description,
             StartDate = p.StartDate,
             EndDate = p.EndDate,
         });

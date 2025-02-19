@@ -11,8 +11,17 @@ public class ProjectShowDto
     public int Id { get; init; }
 
     [Required]
+    public int StatusId { get; init; }
+
+    [Required]
+    public int ProjectManager { get; init; }
+
+    [Required]
     [StringLength(75)]
     public string Title { get; init; } = null!;
+
+    [StringLength(500)]
+    public string? Description { get; init; } = null!;
 
     [Required]
     public DateOnly StartDate { get; init; }
