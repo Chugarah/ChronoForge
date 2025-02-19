@@ -8,7 +8,24 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+// Adding support for CORS
+builder.Services.AddCors(options =>
+{
+    // Adding a new policy
+    options.AddPolicy(
+        "AllowNextJS",
+        policy =>
+        {
+            // Adding support for the Next.js application
+            policy
+                .WithOrigins("http://localhost:3000", "http://localhost:3001")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    );
+});
 
 // Adding support for controllers
 builder.Services.AddControllers();
@@ -24,7 +41,6 @@ var connectionString = builder.Configuration.GetConnectionString("SQLServer");
  */
 builder.Services.AddScoped<ICommonHelpers, CommonHelpers>();
 builder.Services.AddCoreServices().AddInfrastructure(connectionString!);
-
 
 // Adding support for OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -81,7 +97,12 @@ if (app.Environment.IsDevelopment())
 // Adding support for routing
 app.UseHttpsRedirection();
 
-// Adding support for routing
+// Enable CORS after the HTTPS redirection
+app.UseCors("AllowNextJS");
+
+// Adding support for User Authentication
 app.UseAuthorization();
+
+// Adding support for routing
 app.MapControllers();
 app.Run();
