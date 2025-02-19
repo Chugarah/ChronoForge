@@ -3,6 +3,7 @@ using Core.DTOs.Project.Status;
 using Core.Interfaces.Data;
 using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
+using Domain;
 using Domain.Constants;
 using Microsoft.Data.SqlClient;
 
@@ -50,14 +51,8 @@ public class StatusService(
 
             #endregion END TRANSACTION
 
-            // Get the created status from the database, this is required to follow
-            // restful API response 201 best practices
-            var deletedStatus =
-                await statusRepository.GetAsync(s => s!.Name == statusInsertDtoDto.Name)
-                ?? throw new Exception("Could not find the created status in the database");
-
             // Return the created status as a display DTO
-            return statusDtoFactory.ToDtoStatusDisplay(deletedStatus);
+            return statusDtoFactory.ToDtoStatusDisplay(statusInsert);
         }
         catch (DbException ex)
         {

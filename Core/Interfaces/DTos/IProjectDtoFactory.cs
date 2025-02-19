@@ -6,7 +6,7 @@ namespace Core.Interfaces.DTos;
 public interface IProjectDtoFactory
 {
     Projects? ToDomainProjectInsert(ProjectInsertDto createProjectDomain);
-    ProjectShowDto? ToDtoProjectShow(Projects projects);
+    ProjectShowDto? ToDtoProjectShow(Projects? projects);
     IEnumerable<ProjectShowDto> ToDtoProjectShow(IEnumerable<Projects?> projects);
     ProjectDeleteShowDto? ToDtoDeleteShow(Projects projects);
 }

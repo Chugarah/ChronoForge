@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
 import { itemKeys, useProjectsAndStatus } from "@/lib/hooks/items";
 import type { Project } from "@/types/api.types";
-import { ProjectDetailsDialog } from "./ProjectDetailsDialog";
+import { ProjectDetailsDialog } from "./ProjectDetail/ProjectDetailsDialog";
 import { ProjectTable } from "./ProjectTable";
 
 const ListProjects = () => {

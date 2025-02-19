@@ -6,5 +6,5 @@ namespace Core.Interfaces.DTos;
 public interface IStatusDtoFactory
 {
     Status? ToDomainStatusInsert(StatusInsertDto createDto);
-    StatusDisplayDto? ToDtoStatusDisplay(Status status);
+    StatusDisplayDto? ToDtoStatusDisplay(Status? status);
 }

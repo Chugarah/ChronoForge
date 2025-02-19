@@ -1,4 +1,5 @@
 ﻿using Core.Factories;
+using Core.Interfaces.Data;
 using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
 using Core.Services;
@@ -20,10 +21,13 @@ public static class DependencyInjection
         services.AddScoped<IStatusService, StatusService>();
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ICustomersService, CustomersService>();
+        
         // Register factories
         services.AddScoped<IStatusDtoFactory, StatusDtoFactory>();
         services.AddScoped<IProjectDtoFactory, ProjectDtoFactory>();
         services.AddScoped<IUserDtoFactory, UserDtoFactory>();
+        services.AddScoped<ICustomersDtoFactory, CustomersDtoFactory>();
         return services;
     }
 }

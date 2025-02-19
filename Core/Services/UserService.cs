@@ -3,6 +3,7 @@ using Core.DTOs.Project.User;
 using Core.Interfaces.Data;
 using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
+using Domain;
 
 namespace Core.Services;
 
@@ -40,15 +41,8 @@ public class UserService(
 
             #endregion END TRANSACTION
 
-            // Get the created status from the database, this is required to follow
-            // restful API response 201 best practices
-            var createdUser =
-                await userRepository.GetAsync(u =>
-                    u!.FirstName == userInsertDto!.FirstName && u.LastName == userInsertDto.LastName
-                ) ?? null!;
-
             // Return the created project as a display DTO
-            return userDtoFactory.ToDtoStatusDisplay(createdUser);
+            return userDtoFactory.ToDtoStatusDisplay(userInsert);
         }
         catch (Exception)
         {

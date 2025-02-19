@@ -2,9 +2,10 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
-import { itemKeys, useProjectsAndStatus } from "@/lib/hooks/use-items";
+import { useProjectsAndStatus } from "@/lib/hooks/items/queries/combined-queries";
+import { itemKeys } from "@/lib/hooks/items/queries/keys";
 import type { Project } from "@/types/api.types";
-import { ProjectDetailsDialog } from "./Project/ProjectDetailsDialog";
+import { ProjectDetailsDialog } from "./Project/ProjectDetail/ProjectDetailsDialog";
 import { ProjectTable } from "./Project/ProjectTable";
 
 const ListProjects = () => {

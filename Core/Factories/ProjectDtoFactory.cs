@@ -8,6 +8,11 @@ namespace Core.Factories;
 
 public class ProjectDtoFactory : IProjectDtoFactory
 {
+    /// <summary>
+    /// This method is used to convert the ProjectInsertDto to Projects
+    /// </summary>
+    /// <param name="createProjectDomain"></param>
+    /// <returns></returns>
     public Projects? ToDomainProjectInsert(ProjectInsertDto createProjectDomain) =>
         new()
         {
@@ -26,10 +31,10 @@ public class ProjectDtoFactory : IProjectDtoFactory
     /// </summary>
     /// <param name="projects"></param>
     /// <returns></returns>
-    public ProjectShowDto? ToDtoProjectShow(Projects projects) =>
+    public ProjectShowDto? ToDtoProjectShow(Projects? projects) =>
         new()
         {
-            Id = projects.Id,
+            Id = projects!.Id,
             Title = projects.Title,
             ProjectManager = projects.ProjectManager,
             StatusId = projects.StatusId,

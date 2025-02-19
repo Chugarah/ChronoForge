@@ -10,6 +10,6 @@ public class StatusDtoFactory : IStatusDtoFactory
     public Status? ToDomainStatusInsert(StatusInsertDto createDto) => new() { Name = createDto.Name };
 
     // Creating from Domain object to Display a DTO object
-    public StatusDisplayDto? ToDtoStatusDisplay(Status status) =>
-        new() { Id = status.Id, Name = status.Name };
+    public StatusDisplayDto? ToDtoStatusDisplay(Status? status) =>
+        new() { Id = status!.Id, Name = status.Name };
 }

@@ -11,10 +11,10 @@ public class UserDtoFactory : IUserDtoFactory
         new() { FirstName = createDto.FirstName, LastName = createDto.LastName };
 
     // Creating from Domain object to Display a DTO object
-    public UserShowDto? ToDtoStatusDisplay(Users users) =>
+    public UserShowDto? ToDtoStatusDisplay(Users? users) =>
         new()
         {
-            Id = users.Id,
+            Id = users!.Id,
             FirstName = users.FirstName,
             LastName = users.LastName,
         };

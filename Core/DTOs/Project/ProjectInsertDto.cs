@@ -22,6 +22,6 @@ public class ProjectInsertDto
     // This is only valid if used in View connected to the domain
     [Required(ErrorMessage = "You need to provide this format YYYY-MM-DD")]
     public DateOnly StartDate { get; set; }
-    [Required(ErrorMessage = "You need to provide this format YYYY-MM-DD")]
-    public DateOnly EndDate { get; set; }
+
+    public DateOnly? EndDate { get; set; }
 }

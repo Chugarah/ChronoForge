@@ -40,16 +40,8 @@ public class ProjectService(
 
             #endregion END TRANSACTION
 
-            // Get the created status from the database, this is required to follow
-            // restful API response 201 best practices
-            var createdProject =
-                await projectRepository.GetAsync(p =>
-                    p!.Title == projectInsertDto!.Title
-                    && p.ProjectManager == projectInsertDto.ProjectManager
-                ) ?? null!;
-
             // Return the created project as a display DTO
-            return projectDtoFactory.ToDtoProjectShow(createdProject);
+            return projectDtoFactory.ToDtoProjectShow(projectInsert);
         }
         catch (Exception)
         {

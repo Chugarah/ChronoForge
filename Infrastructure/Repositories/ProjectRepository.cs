@@ -6,9 +6,7 @@ using Infrastructure.Entities;
 
 namespace Infrastructure.Repositories;
 
-public class ProjectRepository(DataContext dbContext, IEntityFactory<Projects?, ProjectsEntity> factory)
-    : BaseRepository<Projects, ProjectsEntity>(dbContext, factory),
-        IProjectRepository
-{
-    
-}
+public class ProjectRepository(
+    DataContext dbContext,
+    IEntityFactory<Projects?, ProjectsEntity> factory
+) : BaseRepository<Projects, ProjectsEntity>(dbContext, factory), IProjectRepository { }

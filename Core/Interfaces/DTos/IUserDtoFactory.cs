@@ -6,5 +6,5 @@ namespace Core.Interfaces.DTos;
 public interface IUserDtoFactory
 {
     Users? ToDomainStatusInsert(UserInsertDto createDto);
-    UserShowDto? ToDtoStatusDisplay(Users users);
+    UserShowDto? ToDtoStatusDisplay(Users? users);
 }
