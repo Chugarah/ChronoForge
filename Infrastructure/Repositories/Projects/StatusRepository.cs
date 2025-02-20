@@ -1,10 +1,9 @@
-﻿using Core.Interfaces;
-using Core.Interfaces.Data;
+﻿using Core.Interfaces.Data;
 using Domain;
 using Infrastructure.Contexts;
 using Infrastructure.Entities;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Repositories.Projects;
 
 /// <summary>
 /// Status Repository

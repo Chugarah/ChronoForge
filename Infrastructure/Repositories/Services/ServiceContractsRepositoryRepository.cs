@@ -3,12 +3,12 @@ using Domain;
 using Infrastructure.Contexts;
 using Infrastructure.Entities;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Repositories.Services;
 
-public class ServicesRepository(
+public class ServiceContractsRepositoryRepository(
     DataContext dbContext,
-    IEntityFactory<Services?, ServicesEntity> factory
-) : BaseRepository<Services, ServicesEntity>(dbContext, factory), IServicesRepository {
+    IEntityFactory<ServiceContracts?, ServiceContractsEntity> factory
+) : BaseRepository<ServiceContracts, ServiceContractsEntity>(dbContext, factory), IServiceContractsRepository {
     // If we want to override the methods from the BaseRepository
     // using override keyword, remember that the method needs to be virtual in the BaseRepository
 }

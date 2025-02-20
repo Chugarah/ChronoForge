@@ -185,7 +185,7 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.ServicesEntity", b =>
+            modelBuilder.Entity("Infrastructure.Entities.ServiceContractsEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -350,7 +350,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("UsersEntity");
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.ServicesEntity", b =>
+            modelBuilder.Entity("Infrastructure.Entities.ServiceContractsEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.CustomersEntity", "CustomersEntity")
                         .WithMany()
@@ -377,7 +377,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
-                    b.HasOne("Infrastructure.Entities.ServicesEntity", null)
+                    b.HasOne("Infrastructure.Entities.ServiceContractsEntity", null)
                         .WithMany()
                         .HasForeignKey("ServicesEntityId")
                         .OnDelete(DeleteBehavior.ClientNoAction)

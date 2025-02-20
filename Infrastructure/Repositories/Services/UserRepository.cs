@@ -3,7 +3,7 @@ using Domain;
 using Infrastructure.Contexts;
 using Infrastructure.Entities;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Repositories.Services;
 
 public class UserRepository(DataContext dbContext, IEntityFactory<Users?, UsersEntity> factory)
     : BaseRepository<Users, UsersEntity>(dbContext, factory),

@@ -8,7 +8,7 @@ namespace Infrastructure.Entities;
     nameof(PaymentTypeId),
     nameof(Name),
     IsUnique = true)]
-public sealed class ServicesEntity
+public sealed class ServiceContractsEntity
 {
     [Key]
     public int Id { get; init; }
