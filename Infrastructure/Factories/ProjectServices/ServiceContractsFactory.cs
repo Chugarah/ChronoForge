@@ -4,7 +4,7 @@ using Infrastructure.Entities;
 namespace Infrastructure.Factories.ProjectServices;
 
 /// <summary>
-///
+/// ServiceContractsFactory
 /// </summary>
 public class ServiceContractsFactory : EntityFactoryBase<ServiceContracts, ServiceContractsEntity>
 {

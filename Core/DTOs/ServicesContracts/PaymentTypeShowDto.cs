@@ -1,18 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Infrastructure.Entities;
+namespace Core.DTOs.ServicesContracts;
 
-public class PaymentTypeEntity
+public class PaymentTypeShowDto
 {
-    [Key]
     public int Id { get; init; }
-
     [Required]
-    [Column(TypeName = "nvarchar(100)")]
+    [StringLength(70)]
     public string Name { get; init; } = null!;
-
     [Required]
-    [Column(TypeName = "varchar(10)")]
+    [StringLength(3)]
     public string Currency { get; init; } = null!;
 }

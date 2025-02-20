@@ -3,6 +3,7 @@ using API.Interfaces;
 using Core.DTOs.Project;
 using Core.DTOs.Project.User;
 using Core.Interfaces.Project;
+using Core.Interfaces.ServiceContractsI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

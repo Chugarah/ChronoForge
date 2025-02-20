@@ -1,7 +1,6 @@
-﻿using Core.DTOs.Project;
-using Core.DTOs.ServicesContracts;
+﻿using Core.DTOs.ServicesContracts;
 
-namespace Core.Interfaces.Project;
+namespace Core.Interfaces.ServiceContractsI;
 
 /// <summary>
 ///  Interface for the ServiceContractsService

@@ -1,6 +1,6 @@
 ﻿using Core.DTOs.Project.User;
 
-namespace Core.Interfaces.Project;
+namespace Core.Interfaces.ServiceContractsI;
 
 public interface IUserService
 {

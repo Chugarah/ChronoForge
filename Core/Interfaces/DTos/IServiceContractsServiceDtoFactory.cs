@@ -11,6 +11,6 @@ public interface IServiceContractsServiceDtoFactory
     ServiceContracts? ToDomainServiceContractsUpdate(
         ServiceContractsUpdateDto serviceContractsUpdateDto
     );
-    ServiceContractsShowDto? ToDtoServiceContractDisplay(ServiceContracts? serviceContracts);
+    ServiceContractsShowDto? ToDtoServiceContractDisplay(Domain.ServiceContracts? serviceContracts);
     IEnumerable<ServiceContractsShowDto>? ToDtoServiceContractDisplay(IEnumerable<ServiceContracts?> serviceContracts);
 }

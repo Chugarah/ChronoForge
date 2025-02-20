@@ -2,9 +2,11 @@
 using Core.Interfaces.Data;
 using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
+using Core.Interfaces.ServiceContractsI;
 using Core.Services;
 using Domain;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace Core;
 
 /// <summary>
@@ -24,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICustomersService, CustomersService>();
         services.AddScoped<IServiceContractsService, ServiceContractsService>();
+        services.AddScoped<IPaymentService, PaymentService>();
 
         // Register factories
         services.AddScoped<IStatusDtoFactory, StatusDtoFactory>();
@@ -31,6 +34,11 @@ public static class DependencyInjection
         services.AddScoped<IUserDtoFactory, UserDtoFactory>();
         services.AddScoped<ICustomersDtoFactory, CustomersDtoFactory>();
         services.AddScoped<IServiceContractsServiceDtoFactory, ServiceContractsServiceDtoFactory>();
+        services.AddScoped<IPaymentTypeFactory, PaymentTypeFactory>();
+
+        // Returning the services so it could be used
+        // in our API layer where we are registering the services
+        // using a Composition Root pattern
         return services;
     }
 }
