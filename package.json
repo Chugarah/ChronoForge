@@ -21,7 +21,7 @@
 		"tailwind-container-queries-2d": "^1.0.5",
 		"tailwind-merge": "^2.5.4",
 		"tailwindcss-animate": "^1.0.7"
-	},
+},
 	"devDependencies": {
 		"autoprefixer": "^10.4.20",
 		"postcss": "^8.4.49",

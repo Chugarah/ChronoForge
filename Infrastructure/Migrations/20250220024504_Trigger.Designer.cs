@@ -4,6 +4,7 @@ using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250220024504_Trigger")]
+    partial class Trigger
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,7 +293,7 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProjectServices", b =>
+            modelBuilder.Entity("ProjectsEntityServicesEntity", b =>
                 {
                     b.Property<int>("ProjectsEntityId")
                         .HasColumnType("int");
@@ -302,10 +305,10 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ServicesEntityId");
 
-                    b.ToTable("ProjectServices");
+                    b.ToTable("ProjectsEntityServicesEntity");
                 });
 
-            modelBuilder.Entity("RolesUsers", b =>
+            modelBuilder.Entity("RolesEntityUsersEntity", b =>
                 {
                     b.Property<int>("RolesEntityId")
                         .HasColumnType("int");
@@ -317,7 +320,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UsersEntityId");
 
-                    b.ToTable("RolesUsers");
+                    b.ToTable("RolesEntityUsersEntity");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.CustomersEntity", b =>
@@ -369,7 +372,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("PaymentTypeEntity");
                 });
 
-            modelBuilder.Entity("ProjectServices", b =>
+            modelBuilder.Entity("ProjectsEntityServicesEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.ProjectsEntity", null)
                         .WithMany()
@@ -384,7 +387,7 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RolesUsers", b =>
+            modelBuilder.Entity("RolesEntityUsersEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.RolesEntity", null)
                         .WithMany()

@@ -6,11 +6,13 @@ namespace Infrastructure.Entities;
 // This class represents the Projects table in the database
 // adding the Index attribute to the class to make sure that the combination of ProjectManager and Title is unique
 [Index(nameof(ProjectManager), nameof(Title), IsUnique = true)]
-public class ProjectsEntity
+public sealed class ProjectsEntity
 {
     [Key]
     public int Id { get; init; }
-    // Navigation properties for EF Core relationships
+    // Creating a collection of ServicesEntity to
+    // represent the one-to-many relationship between ProjectsEntity and ServicesEntity
+    public ICollection<ServicesEntity> ServicesEntity { get; set; } = new List<ServicesEntity>();
     public int StatusId { get; init; }
     [ForeignKey(nameof(StatusId))]
     public StatusEntity StatusEntity { get; init; } = null!;

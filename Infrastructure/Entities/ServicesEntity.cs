@@ -8,12 +8,13 @@ namespace Infrastructure.Entities;
     nameof(PaymentTypeId),
     nameof(Name),
     IsUnique = true)]
-public class ServicesEntity
+public sealed class ServicesEntity
 {
     [Key]
     public int Id { get; init; }
-
     // Navigation properties for EF Core relationships
+    public ICollection<ProjectsEntity> ProjectsEntity { get; init; } = new List<ProjectsEntity>();
+
     public int CustomerId { get; init; }
     [ForeignKey(nameof(CustomerId))]
     public CustomersEntity CustomersEntity { get; init; } = null!;

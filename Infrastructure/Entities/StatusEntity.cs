@@ -6,7 +6,7 @@ namespace Infrastructure.Entities;
 
 
 [Index(nameof(Name), IsUnique = true)]
-public class StatusEntity
+public sealed class StatusEntity
 {
     [Key]
     public int Id {get; init;}
@@ -15,5 +15,5 @@ public class StatusEntity
     [Column(TypeName = "nvarchar(50)")]
     public string Name {get ; init;} = null!;
 
-    public virtual ICollection<ProjectsEntity> ProjectsEntity { get; set; } = [];
+    public ICollection<ProjectsEntity> ProjectsEntity { get; set; } = new List<ProjectsEntity>();
 }
