@@ -3,7 +3,9 @@ using Domain;
 using Infrastructure.Contexts;
 using Infrastructure.Entities;
 using Infrastructure.Factories.Project;
-using Infrastructure.Repositories;
+using Infrastructure.Factories.ProjectServices;
+using Infrastructure.Repositories.Projects;
+using Infrastructure.Repositories.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -42,12 +44,14 @@ public static class DependencyInjection
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IServiceContractsRepository, ServiceContractsRepositoryRepository>();
 
         // Registering the factories in DI container
         services.AddScoped<IEntityFactory<Status, StatusEntity>, StatusFactory>();
         services.AddScoped<IEntityFactory<Projects, ProjectsEntity>, ProjectFactory>();
         services.AddScoped<IEntityFactory<Users, UsersEntity>, UserFactory>();
         services.AddScoped<IEntityFactory<Customers, CustomersEntity>, CustomerFactory>();
+        services.AddScoped<IEntityFactory<ServiceContracts, ServiceContractsEntity>, ServiceContractsFactory>();
 
         // Got help from Phind AI to add this line regarding the UnitOfWork
         services.AddScoped<IUnitOfWork>(provider => new UnitOfWork(
