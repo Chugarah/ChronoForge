@@ -33,7 +33,7 @@ public class CustomersService(
             await customerRepository.CreateAsync(customerInsert);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
@@ -62,7 +62,7 @@ public class CustomersService(
         try
         {
             // Get the status from the database
-            var customer = await customerRepository.GetAsync(c => c!.Id == id);
+            var customer = await customerRepository.GetAsync(c => c!.Id == id, false);
             // Convert the status to a display DTO
             return customer != null ? customersDtoFactory.ToCustomerShow(customer) : null;
         }

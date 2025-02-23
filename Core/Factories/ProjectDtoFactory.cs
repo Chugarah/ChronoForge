@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Core.DTOs.Project;
 using Core.DTOs.Project.Status;
+using Core.DTOs.ServicesContracts;
 using Core.Interfaces.DTos;
 using Domain;
 
@@ -11,19 +12,92 @@ public class ProjectDtoFactory : IProjectDtoFactory
     /// <summary>
     /// This method is used to convert the ProjectInsertDto to Projects
     /// </summary>
-    /// <param name="createProjectDomain"></param>
+    /// <param name="formDto"></param>
     /// <returns></returns>
-    public Projects? ToDomainProjectInsert(ProjectInsertDto createProjectDomain) =>
-        new()
+    public Projects ToDomainProjectInsert(ProjectInsertFormDto formDto)
+    {
+        return new Projects
         {
-            StatusId = createProjectDomain.StatusId,
-            ProjectManager = createProjectDomain.ProjectManager,
-            Title = createProjectDomain.Title,
-            Description = createProjectDomain.Description,
-            StartDate = createProjectDomain.StartDate,
-            EndDate = createProjectDomain.EndDate,
+            Title = formDto.Title,
+            ProjectManager = formDto.ProjectManager,
+            StartDate = formDto.StartDate,
+            EndDate = formDto.EndDate,
+            StatusId = formDto.StatusId,
+            Description = formDto.Description,
+            // Safe collection initialization
+            ServiceContracts = new List<ServiceContracts?>(),
         };
+    }
 
+    /// <summary>
+    /// This method is used to convert the ProjectUpdateDto to Projects
+    /// This updates the project
+    /// </summary>
+    /// <param name="updateProjectDomain"></param>
+    /// <returns></returns>
+    public Projects ToDomainProjectUpdate(ProjectUpdateDto updateProjectDomain)
+    {
+        return new Projects
+        {
+            Id = updateProjectDomain.Id,
+            StatusId = updateProjectDomain.StatusId,
+            ProjectManager = updateProjectDomain.ProjectManager,
+            Title = updateProjectDomain.Title,
+            Description = updateProjectDomain.Description,
+            StartDate = updateProjectDomain.StartDate,
+            EndDate = updateProjectDomain.EndDate,
+        };
+    }
+
+    /// <summary>
+    /// This method is used to convert the ProjectShowDto to Projects
+    /// </summary>
+    /// <param name="project"></param>
+    /// <returns></returns>
+    public ProjectShowDto ToDomainProjectShow(Projects project)
+    {
+        return new ProjectShowDto
+        {
+            Id = project.Id,
+            ServiceContracts = project.ServiceContracts.Select(sc => new ServiceContractsShowDto
+            {
+                Id = sc!.Id,
+                CustomerId = sc.CustomerId,
+                PaymentTypeId = sc.PaymentTypeId,
+                Name = sc.Name,
+                Price = sc.Price,
+            }),
+            Title = project.Title,
+            StatusId = project.StatusId,
+            ProjectManager = project.ProjectManager,
+            Description = project.Description,
+            StartDate = project.StartDate,
+            EndDate = project.EndDate,
+        };
+    }
+
+    /// <summary>
+    /// This method is used to convert the ProjectUpdateDto to Projects
+    /// Different from the above method, this one returns a collection of Projects
+    /// </summary>
+    /// <param name="updateProjectDomain"></param>
+    /// <returns></returns>
+    public IEnumerable<Projects> ToDomainProjectUpdateList(
+        IEnumerable<ProjectUpdateDto> updateProjectDomain
+    )
+    {
+        // Using LINQ to convert the ProjectUpdateDto to Projects
+        return updateProjectDomain.Select(p => new Projects
+        {
+            Id = p.Id,
+            StatusId = p.StatusId,
+            ProjectManager = p.ProjectManager,
+            Title = p.Title,
+            Description = p.Description,
+            StartDate = p.StartDate,
+            EndDate = p.EndDate,
+        });
+    }
 
     /// <summary>
     /// This method is used to convert the Projects to ProjectShowDto
@@ -35,7 +109,7 @@ public class ProjectDtoFactory : IProjectDtoFactory
         new()
         {
             Id = projects!.Id,
-            Title = projects.Title,
+            Title = projects!.Title,
             ProjectManager = projects.ProjectManager,
             StatusId = projects.StatusId,
             Description = projects.Description,

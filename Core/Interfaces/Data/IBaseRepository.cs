@@ -13,9 +13,20 @@ public interface IBaseRepository<TDomain>
     Task<TDomain?> CreateAsync(TDomain? domainEntity);
     Task<TDomain?> UpdateAsync(TDomain? domainEntity);
 
-    Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> domainPredicate);
+    Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> domainPredicate,
+        bool tracking,
+        params Expression<Func<TDomain, object>>[]? includes);
 
-    Task<IEnumerable<TDomain?>> GetAllAsync(Expression<Func<TDomain?, bool>> domainPredicate);
+    Task<IEnumerable<TDomain?>> GetAllAsync(Expression<Func<TDomain?, bool>> domainPredicate,
+        bool tracking = false,
+        params Expression<Func<TDomain, object>>[]? includes);
 
     Task<TDomain?> DeleteAsync(TDomain? domainEntity);
+
+    Task<TDomain?> AttachAsync(TDomain? domainEntity);
+
+
+    // Section to check for data and return of exist
+    Task<bool> AnyAsync(Expression<Func<TDomain?, bool>> domainPredicate);
+    Task<TDomain?> GetIfExistsAsync(Expression<Func<TDomain?, bool>> domainPredicate);
 }

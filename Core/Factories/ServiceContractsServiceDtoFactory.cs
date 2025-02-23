@@ -21,6 +21,7 @@ public class ServiceContractsServiceDtoFactory : IServiceContractsServiceDtoFact
             PaymentTypeId = serviceContractsInsertDto.PaymentTypeId,
             Name = serviceContractsInsertDto.Name,
             Price = serviceContractsInsertDto.Price,
+            Projects = [],
         };
         return serviceContracts;
     }

@@ -82,7 +82,7 @@ public class StatusService(
         try
         {
             // Get the status from the database
-            var status = await statusRepository.GetAsync(s => s!.Id == id);
+            var status = await statusRepository.GetAsync(s => s!.Id == id,false);
             // Convert the status to a display DTO
             return status != null ? statusDtoFactory.ToDtoStatusDisplay(status) : null;
         }
@@ -106,7 +106,7 @@ public class StatusService(
             // Get the status from the database
             // https://stackoverflow.com/questions/606636/best-way-to-handle-a-keynotfoundexception
             var status =
-                await statusRepository.GetAsync(s => s!.Id == statusUpdateDtoDto.Id)
+                await statusRepository.GetAsync(s => s!.Id == statusUpdateDtoDto.Id, true)
                 ?? throw new KeyNotFoundException(
                     $"Status with ID {statusUpdateDtoDto.Id} not found"
                 );
@@ -123,7 +123,7 @@ public class StatusService(
             await statusRepository.UpdateAsync(status);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
@@ -156,7 +156,7 @@ public class StatusService(
         {
             // Get the status from the database
             var status =
-                await statusRepository.GetAsync(s => s!.Id == id)
+                await statusRepository.GetAsync(s => s!.Id == id, true)
                 ?? throw new KeyNotFoundException($"Status with ID {id} not found");
 
             // Check if the status is the default status, we cannot delete the default status
@@ -187,7 +187,7 @@ public class StatusService(
             await statusRepository.DeleteAsync(status);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();

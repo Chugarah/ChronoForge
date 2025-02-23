@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Core.DTOs.Project.Status;
+using Domain;
 
 namespace Core.DTOs.Project;
 
-public class ProjectInsertDto
+public class ProjectInsertFormDto ()
 {
     [Required]
     public int StatusId { get; set; }
+
+    public ICollection<ServiceContracts> ServiceContracts { get; set; } = [];
 
     [Required]
     public int ProjectManager { get; set; }
@@ -16,7 +19,7 @@ public class ProjectInsertDto
     public string Title { get; set; } = null!;
 
     [StringLength(500)]
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
 
 
     // This is only valid if used in View connected to the domain

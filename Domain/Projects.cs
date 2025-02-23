@@ -4,7 +4,7 @@ public class Projects
 {
     public int Id { get; set; }
     // This creates a bidirectional (navigation) relationship between the Project and Services entities
-    public ICollection<ServiceContracts> Services { get; set; } = new List<ServiceContracts>();
+    public ICollection<ServiceContracts?> ServiceContracts { get; set; } = new List<ServiceContracts?>();
 
     public int StatusId { get; set; }
     public Status Status { get; set; } = null!;

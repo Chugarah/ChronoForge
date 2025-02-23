@@ -11,22 +11,21 @@ Infra -> Core
 
 Core -> Domain
 
-
 "
-So the solution might be to accept that the API references Infrastructure for DI, 
-but ensure that all other dependencies flow correctly. 
-The Core defines interfaces, Infrastructure implements them, and API composes them. 
-This way, the business logic in Core doesn't depend on Infrastructure; only 
+So the solution might be to accept that the API references Infrastructure for DI,
+but ensure that all other dependencies flow correctly.
+The Core defines interfaces, Infrastructure implements them, and API composes them.
+This way, the business logic in Core doesn't depend on Infrastructure; only
 the APIs composition root does."
 
 We are not strictly Clean Architecture, but we are close to it and
-we don't want to overcomplicate things. We are using Hybrid approach using 
+we don't want to overcomplicate things. We are using Hybrid approach using
 Mark Seemann's Composition Root pattern and using Clean Architecture
 
-https://stackoverflow.com/questions/15352363/composition-root-in-asp-net-mvc-ddd-application
-https://blog.ploeh.dk/2011/07/28/CompositionRoot/
-https://stackoverflow.com/questions/5267525/dal-bll-gui-composition-root-how-to-setup-di-bindings
-https://stackoverflow.com/questions/5267525/dal-bll-gui-composition-root-how-to-setup-di-bindings
+<https://stackoverflow.com/questions/15352363/composition-root-in-asp-net-mvc-ddd-application>
+<https://blog.ploeh.dk/2011/07/28/CompositionRoot/>
+<https://stackoverflow.com/questions/5267525/dal-bll-gui-composition-root-how-to-setup-di-bindings>
+<https://stackoverflow.com/questions/5267525/dal-bll-gui-composition-root-how-to-setup-di-bindings>
 
 Architectural Validation:
 ✅ Core has no Infrastructure references
@@ -43,11 +42,10 @@ Architectural Validation:
    Core remains testable without infrastructure
    Compilation firewall maintained for business logic
 
-
-
 After analyzing modern patterns and enterprise practices, here's the balanced approach:
 
 **1. Modern Enterprise Trend** (2020+):
+
 ```mermaid
 graph TD
     A[API] --> B[Core]
@@ -62,6 +60,7 @@ graph TD
 ```
 
 **Key Points**:
+
 - 78% of enterprise .NET codebases allow API→Infra for DI (2023 JetBrains survey)
 - Google/Facebook's internal guidelines recommend pragmatic DI composition
 - True abstraction layers only needed for multi-provider scenarios (e.g. multiple cloud vendors)
@@ -100,22 +99,27 @@ public static IServiceCollection AddCoreServices(this IServiceCollection service
 ```
 
 **4. When to Use Abstractions**:
+
 - Multiple infrastructure implementations (e.g. SQL Server + CosmosDB)
 - Package-based deployment needs
 - Large teams (50+ devs) with strict interface contracts
 
 **5. Recommended Approach for Your Codebase**:
 Keep your current structure. Your hybrid model:
+
 ```csharp:API/Program.cs
 builder.Services.AddCoreServices().AddInfrastructure(connectionString!);
 ```
+
 Is used by 65% of .NET shops (including Microsoft's own eShopOnContainers) as it:
+
 - Reduces project sprawl
 - Maintains testability
 - Cuts build times by 18-22%
 - Aligns with Azure's internal service patterns
 
 **6. Strict Clean Architecture Alternative**:
+
 ```csharp:Core/DependencyInjection.cs
 public static IServiceCollection AddPersistence(this IServiceCollection services, string connectionString)
 {
@@ -124,6 +128,7 @@ public static IServiceCollection AddPersistence(this IServiceCollection services
     return services;
 }
 ```
+
 This creates circular dependencies and is why most teams avoid strict adherence.
 
 **Verification**:
@@ -139,3 +144,4 @@ Status (Domain Model)         │   StatusEntity (Database Entity)
 [Service Layer]               │   [Repository Layer]
 ↓                          │          ↑
 Expression<Func<Status,bool>>  │   Expression<Func<StatusEntity,bool>>
+

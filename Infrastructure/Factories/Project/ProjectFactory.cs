@@ -13,10 +13,8 @@ public class ProjectFactory : EntityFactoryBase<Projects, ProjectsEntity>
     /// </summary>
     /// <param name="projectsEntity"></param>
     /// <returns></returns>
-    public override Projects ToDomain(ProjectsEntity projectsEntity)
-    {
-        // Inspired by Mikael :) This is for easier debugging
-        var projects = new Projects
+    public override Projects ToDomain(ProjectsEntity projectsEntity) =>
+        new()
         {
             Id = projectsEntity.Id,
             StatusId = projectsEntity.StatusId,
@@ -25,9 +23,18 @@ public class ProjectFactory : EntityFactoryBase<Projects, ProjectsEntity>
             Description = projectsEntity.Description,
             StartDate = projectsEntity.StartDate,
             EndDate = projectsEntity.EndDate,
+            ServiceContracts =
+                projectsEntity
+                    .ServiceContractsEntity?.Select(sc => new ServiceContracts
+                    {
+                        Id = sc.Id,
+                        CustomerId = sc.CustomerId,
+                        PaymentTypeId = sc.PaymentTypeId,
+                        Name = sc.Name,
+                        Price = sc.Price,
+                    })
+                    .ToList() ?? [],
         };
-        return projects!;
-    }
 
     /// <summary>
     /// Creating from Domain object to Entity object
@@ -35,15 +42,24 @@ public class ProjectFactory : EntityFactoryBase<Projects, ProjectsEntity>
     /// </summary>
     /// <param name="projects"></param>
     /// <returns></returns>
-    public override ProjectsEntity ToEntity(Projects projects) =>
-        new()
+    public override ProjectsEntity ToEntity(Projects domain)
+    {
+        var entity = new ProjectsEntity
         {
-            Id = projects.Id,
-            StatusId = projects.StatusId,
-            ProjectManager = projects.ProjectManager,
-            Title = projects.Title,
-            Description = projects.Description,
-            StartDate = projects.StartDate,
-            EndDate = projects.EndDate,
+            Id = domain.Id,
+            Title = domain.Title,
+            ProjectManager = domain.ProjectManager,
+            StartDate = domain.StartDate,
+            EndDate = domain.EndDate,
+            StatusId = domain.StatusId,
+            Description = domain.Description,
+            // Map relationships through IDs only
+            ServiceContractsEntity = domain.ServiceContracts?
+                .Where(sc => sc.Id > 0)
+                .Select(sc => new ServiceContractsEntity { Id = sc.Id })
+                .ToList() ?? new List<ServiceContractsEntity>()
         };
+
+        return entity;
+    }
 }

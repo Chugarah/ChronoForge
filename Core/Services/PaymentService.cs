@@ -16,7 +16,10 @@ public class PaymentService(
         try
         {
             // Get the paymentType from the database
-            var paymentType = await paymentTypeRepository.GetAsync(p => p != null && p.Id == id);
+            var paymentType = await paymentTypeRepository.GetAsync(
+                p => p != null && p.Id == id,
+                false
+            );
 
             // Convert the paymentType to a display DTO
             return paymentType != null ? paymentTypeFactory.ToDtoStatusDisplay(paymentType) : null;

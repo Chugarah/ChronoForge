@@ -44,7 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IServiceContractsRepository, ServiceContractsRepositoryRepository>();
+        services.AddScoped<IServiceContractsRepository, ServiceContractsRepository>();
         services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
 
         // Registering the factories in DI container

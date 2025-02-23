@@ -31,16 +31,20 @@ public class ServiceContractsFactory : EntityFactoryBase<ServiceContracts, Servi
     /// </summary>
     /// <param name="serviceContracts"></param>
     /// <returns></returns>
-    public override ServiceContractsEntity ToEntity(ServiceContracts serviceContracts)
+    public override ServiceContractsEntity ToEntity(ServiceContracts domain)
     {
-        var serviceEntity = new ServiceContractsEntity
+        return new ServiceContractsEntity
         {
-            Id = serviceContracts.Id,
-            CustomerId = serviceContracts.CustomerId,
-            PaymentTypeId = serviceContracts.PaymentTypeId,
-            Name = serviceContracts.Name,
-            Price = serviceContracts.Price,
+            Id = domain.Id,
+            CustomerId = domain.CustomerId,
+            PaymentTypeId = domain.PaymentTypeId,
+            Name = domain.Name,
+            Price = domain.Price,
+            // Map relationships through IDs only
+            ProjectsEntity = domain.Projects?
+                .Where(p => p?.Id > 0)
+                .Select(p => new ProjectsEntity { Id = p.Id })
+                .ToList() ?? new List<ProjectsEntity>()
         };
-        return serviceEntity;
     }
 }

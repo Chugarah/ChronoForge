@@ -35,7 +35,7 @@ public class UserService(
             await userRepository.CreateAsync(userInsert);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
@@ -64,7 +64,7 @@ public class UserService(
         try
         {
             // Get the project from the database
-            var user = await userRepository.GetAsync(u => u != null && u.Id == id);
+            var user = await userRepository.GetAsync(u => u != null && u.Id == id, false);
 
             // Convert the project to a display DTO
             return user != null ? userDtoFactory.ToDtoStatusDisplay(user) : null;
@@ -88,7 +88,7 @@ public class UserService(
         {
             // Get the user from the database
             var user =
-                await userRepository.GetAsync(p => p!.Id == userUpdateDto.Id)
+                await userRepository.GetAsync(p => p!.Id == userUpdateDto.Id,true)
                 ?? throw new Exception("Could not find the user in the database");
 
             // Update the user with the new values
@@ -104,7 +104,7 @@ public class UserService(
             await userRepository.UpdateAsync(user);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();

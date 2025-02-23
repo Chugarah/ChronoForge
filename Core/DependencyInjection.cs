@@ -1,4 +1,5 @@
 ﻿using Core.Factories;
+using Core.Interfaces.Associations;
 using Core.Interfaces.Data;
 using Core.Interfaces.DTos;
 using Core.Interfaces.Project;
@@ -27,6 +28,7 @@ public static class DependencyInjection
         services.AddScoped<ICustomersService, CustomersService>();
         services.AddScoped<IServiceContractsService, ServiceContractsService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IProjectAssociationService, ProjectAssociationService>();
 
         // Register factories
         services.AddScoped<IStatusDtoFactory, StatusDtoFactory>();
@@ -35,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<ICustomersDtoFactory, CustomersDtoFactory>();
         services.AddScoped<IServiceContractsServiceDtoFactory, ServiceContractsServiceDtoFactory>();
         services.AddScoped<IPaymentTypeFactory, PaymentTypeFactory>();
+        services.AddScoped<IAssociationFactory, AssociationFactory>();
 
         // Returning the services so it could be used
         // in our API layer where we are registering the services

@@ -18,5 +18,5 @@ public class CustomersEntity
     // Navigation properties for EF Core relationships
     public int ContactPersonId { get; init; }
     [ForeignKey(nameof(ContactPersonId))]
-    public UsersEntity UsersEntity { get; init; } = null!;
+    public virtual UsersEntity UsersEntity { get; init; } = null!;
 }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class HelloWorld : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    Currency = table.Column<string>(type: "char(10)", nullable: false)
+                    Currency = table.Column<string>(type: "varchar(10)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -98,7 +98,7 @@ namespace Infrastructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(75)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    EndDate = table.Column<DateOnly>(type: "date", nullable: false)
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -121,28 +121,28 @@ namespace Infrastructure.Migrations
                 name: "RolesEntityUsersEntity",
                 columns: table => new
                 {
-                    RolesId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<int>(type: "int", nullable: false)
+                    RolesEntityId = table.Column<int>(type: "int", nullable: false),
+                    UsersEntityId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolesEntityUsersEntity", x => new { x.RolesId, x.UsersId });
+                    table.PrimaryKey("PK_RolesEntityUsersEntity", x => new { x.RolesEntityId, x.UsersEntityId });
                     table.ForeignKey(
-                        name: "FK_RolesEntityUsersEntity_Roles_RolesId",
-                        column: x => x.RolesId,
+                        name: "FK_RolesEntityUsersEntity_Roles_RolesEntityId",
+                        column: x => x.RolesEntityId,
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RolesEntityUsersEntity_Users_UsersId",
-                        column: x => x.UsersId,
+                        name: "FK_RolesEntityUsersEntity_Users_UsersEntityId",
+                        column: x => x.UsersEntityId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Services",
+                name: "ServiceContracts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -154,19 +154,43 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Services", x => x.Id);
+                    table.PrimaryKey("PK_ServiceContracts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Services_Customers_CustomerId",
+                        name: "FK_ServiceContracts_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Services_PaymentType_PaymentTypeId",
+                        name: "FK_ServiceContracts_PaymentType_PaymentTypeId",
                         column: x => x.PaymentTypeId,
                         principalTable: "PaymentType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectServiceContracts",
+                columns: table => new
+                {
+                    ProjectsEntityId = table.Column<int>(type: "int", nullable: false),
+                    ServiceContractsEntityId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectServiceContracts", x => new { x.ProjectsEntityId, x.ServiceContractsEntityId });
+                    table.ForeignKey(
+                        name: "FK_ProjectServiceContracts_Projects_ProjectsEntityId",
+                        column: x => x.ProjectsEntityId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProjectServiceContracts_ServiceContracts_ServiceContractsEntityId",
+                        column: x => x.ServiceContractsEntityId,
+                        principalTable: "ServiceContracts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -202,6 +226,16 @@ namespace Infrastructure.Migrations
                     { 4, "Completed" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "FirstName", "LastName" },
+                values: new object[] { 1, "No User is set", "Starcraft" });
+
+            migrationBuilder.InsertData(
+                table: "Customers",
+                columns: new[] { "Id", "ContactPersonId", "Name" },
+                values: new object[] { 1, 1, "No Contact Person" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_ContactPersonId",
                 table: "Customers",
@@ -231,25 +265,30 @@ namespace Infrastructure.Migrations
                 column: "StatusId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProjectServiceContracts_ServiceContractsEntityId",
+                table: "ProjectServiceContracts",
+                column: "ServiceContractsEntityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Roles_Name",
                 table: "Roles",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolesEntityUsersEntity_UsersId",
+                name: "IX_RolesEntityUsersEntity_UsersEntityId",
                 table: "RolesEntityUsersEntity",
-                column: "UsersId");
+                column: "UsersEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Services_CustomerId_PaymentTypeId_Name",
-                table: "Services",
+                name: "IX_ServiceContracts_CustomerId_PaymentTypeId_Name",
+                table: "ServiceContracts",
                 columns: new[] { "CustomerId", "PaymentTypeId", "Name" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Services_PaymentTypeId",
-                table: "Services",
+                name: "IX_ServiceContracts_PaymentTypeId",
+                table: "ServiceContracts",
                 column: "PaymentTypeId");
 
             migrationBuilder.CreateIndex(
@@ -269,19 +308,22 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Projects");
+                name: "ProjectServiceContracts");
 
             migrationBuilder.DropTable(
                 name: "RolesEntityUsersEntity");
 
             migrationBuilder.DropTable(
-                name: "Services");
+                name: "Projects");
 
             migrationBuilder.DropTable(
-                name: "Status");
+                name: "ServiceContracts");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Status");
 
             migrationBuilder.DropTable(
                 name: "Customers");

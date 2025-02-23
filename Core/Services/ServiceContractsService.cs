@@ -39,7 +39,7 @@ public class ServiceContractsService(
             await serviceContractsRepository.CreateAsync(serviceContractInsert);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
@@ -71,7 +71,7 @@ public class ServiceContractsService(
         {
             // Get the ServiceContract from the database
             var serviceContracts = await serviceContractsRepository.GetAsync(s =>
-                s != null && s.Id == id
+                s != null && s.Id == id,false
             );
 
             // Convert the ServiceContract to a display DTO
@@ -122,7 +122,7 @@ public class ServiceContractsService(
             // Get the ServiceContract from the database
             var serviceContracts =
                 await serviceContractsRepository.GetAsync(s =>
-                    s!.Id == serviceContractsUpdateDto.Id
+                    s!.Id == serviceContractsUpdateDto.Id,true
                 ) ?? throw new Exception("Could not find the ServiceContract in the database");
 
             // Update the ServiceContract with the new values
@@ -140,7 +140,7 @@ public class ServiceContractsService(
             await serviceContractsRepository.UpdateAsync(serviceContracts);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();

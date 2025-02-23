@@ -5,6 +5,7 @@ using Core.Interfaces.Data;
 using Infrastructure.Contexts;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Infrastructure.Repositories;
 
@@ -19,7 +20,7 @@ namespace Infrastructure.Repositories;
 /// </summary>
 /// <remarks>
 /// Implementation notes:
-/// - Uses <see cref="IEntityFactory{TDomain,TEntity}"/> for bi-directional conversions
+/// - Uses <see cref="IEntityFactory{TDomain,TEntity}"/> for bidirectional conversions
 /// - All database operations are async-first
 /// - Predicate conversion handles domain-to-entity type translation
 /// - Designed for extension not modification (open/closed principle)
@@ -74,7 +75,7 @@ public abstract class BaseRepository<TDomain, TEntity>(
     /// </remarks>
     public virtual async Task<TDomain?> GetAsync(Expression<Func<TDomain?, bool>> domainPredicate)
     {
-        return await GetAsync(domainPredicate, includes: null);
+        return await GetAsync(domainPredicate, tracking: false, includes: null);
     }
 
     /// <summary>
@@ -88,39 +89,51 @@ public abstract class BaseRepository<TDomain, TEntity>(
     /// predicate and calls the existing method with a null predicate.
     /// </summary>
     /// <returns></returns>
-    public virtual async Task<IEnumerable<TDomain?>> GetAllAsync(Expression<Func<TDomain?, bool>> domainPredicate)
+    public virtual async Task<IEnumerable<TDomain?>> GetAllAsync(
+        Expression<Func<TDomain?, bool>> domainPredicate
+    )
     {
         return await GetAllAsync(domainPredicate, includes: null);
     }
 
     /// <summary>
     /// Retrieves a single domain entity using type-safe domain predicates
+    /// This was inspired by Hans and refactored by Phind AI
     /// </summary>
     /// <param name="domainPredicate"></param>
+    /// <param name="tracking"></param>
     /// <param name="includes"></param>
     /// <returns></returns>
     public virtual async Task<TDomain?> GetAsync(
         Expression<Func<TDomain?, bool>> domainPredicate,
+        bool tracking = false,
         params Expression<Func<TDomain, object>>[]? includes
     )
     {
-        // Convert domain predicate to entity predicate
-        var entityPredicate = factory.CreateEntityPredicate(domainPredicate);
-        // Start building the query
-        var query = _dbSet.AsNoTracking();
+        // Convert includes FIRST
+        var entityIncludes = includes
+            ?.Select(include =>
+                factory.CreateEntityInclude(include!)
+                ?? throw new InvalidOperationException($"Include mapping missing for {include}")
+            )
+            .ToArray();
 
-        // Check if includes are provided
-        if (includes != null)
+        // Start with base query
+        var query = _dbSet.AsQueryable();
+
+        // Apply includes BEFORE tracking
+        if (entityIncludes != null)
         {
-            // Include related entities
-            query = includes
-                .Select(factory.CreateEntityInclude!)
-                .Aggregate(query, (current, entityInclude) => current.Include(entityInclude));
+            query = entityIncludes.Aggregate(query, (current, include) => current.Include(include));
         }
 
-        // Apply the entity predicate and get the first entity
+        // Convert predicate AFTER includes
+        var entityPredicate = factory.CreateEntityPredicate(domainPredicate);
+
+        // Apply tracking LAST
+        query = tracking ? query.AsTracking() : query.AsNoTracking();
+
         var entity = await query.FirstOrDefaultAsync(entityPredicate);
-        // Return the domain object using the factory
         return entity != null ? factory.ToDomain(entity) : null;
     }
 
@@ -131,17 +144,22 @@ public abstract class BaseRepository<TDomain, TEntity>(
     /// </summary>
     /// <param name="domainPredicate"></param>
     /// <param name="includes"></param>
+    /// <param name="tracking"></param>
     /// <returns></returns>
-    private async Task<IEnumerable<TDomain>> GetAllAsync(
-        Expression<Func<TDomain?, bool>>? domainPredicate = null,
+    public virtual async Task<IEnumerable<TDomain?>> GetAllAsync(
+        Expression<Func<TDomain?, bool>> domainPredicate,
+        bool tracking = false,
         params Expression<Func<TDomain, object>>[]? includes
     )
     {
         // Convert the domain predicate to an entity predicate
         var entityPredicate = factory.CreateEntityPredicate(domainPredicate);
 
-        // Start building the query
-        var query = _dbSet.AsNoTracking();
+        // Create the query
+        var query = _dbSet.IncludeNavigationProperties(dataContext);
+
+        // Check if tracking is enabled
+        query = tracking ? query.AsTracking() : query.AsNoTracking();
 
         // Apply the entity predicate
         query = query.Where(entityPredicate);
@@ -171,8 +189,11 @@ public abstract class BaseRepository<TDomain, TEntity>(
         // Convert the domain object to an entity object
         var entity = factory.ToEntity(domainEntity);
 
-        // Update the entity in the DbSet
-        _dbSet.Update(entity);
+        // Attach and mark as unchanged to avoid tracking conflicts
+        _dbSet.Attach(entity);
+
+        // Mark the entity as modified
+        dataContext.Entry(entity).State = EntityState.Modified;
 
         // Return the domain object
         return Task.FromResult(factory.ToDomain(entity));
@@ -193,5 +214,68 @@ public abstract class BaseRepository<TDomain, TEntity>(
 
         // Return the domain object
         return Task.FromResult(factory.ToDomain(entity));
+    }
+
+    /// <summary>
+    /// Attaches an existing domain entity to the database context
+    /// </summary>
+    /// <param name="domainEntity"></param>
+    /// <returns></returns>
+    public Task<TDomain?> AttachAsync(TDomain? domainEntity)
+    {
+        var entity = factory.ToEntity(domainEntity);
+        _dbSet.Attach(entity);
+        return Task.FromResult(factory.ToDomain(entity));
+    }
+
+    /// <summary>
+    /// Check if a domain entity exists using the database predicate
+    /// using code inspired from this base repository building on Hans's tutorial.
+    /// </summary>
+    /// <param name="domainPredicate"></param>
+    /// <returns></returns>
+    public virtual async Task<bool> AnyAsync(Expression<Func<TDomain?, bool>> domainPredicate)
+    {
+        // Convert the domain predicate to an entity predicate (see if we have that entity in the database)
+        var entityPredicate = factory.CreateEntityPredicate(domainPredicate);
+        // Return the result of the operation
+        return await _dbSet.AnyAsync(entityPredicate);
+    }
+
+    /// <summary>
+    /// Convert the domain predicate to an entity predicate (see if we have that entity in the database)
+    /// Based on AI Phind recommendation this one should be used sparingly
+    /// becouse it is a slightly heavier query than AnyAsync
+    /// </summary>
+    /// <param name="domainPredicate"></param>
+    /// <returns></returns>
+    public virtual async Task<TDomain?> GetIfExistsAsync(
+        Expression<Func<TDomain?, bool>> domainPredicate
+    )
+    {
+        // Convert the domain predicate to an entity predicate using the factory
+        var entityPredicate = factory.CreateEntityPredicate(domainPredicate);
+        // Get the first entity that matches the predicate
+        var entity = await _dbSet.AsNoTracking().FirstOrDefaultAsync(entityPredicate);
+        // Return the domain object using the factory becouse we want to return the domain object
+        return entity != null ? factory.ToDomain(entity) : null;
+    }
+}
+
+public static class QueryableExtensions
+{
+    public static IQueryable<TEntity> IncludeNavigationProperties<TEntity>(
+        this IQueryable<TEntity> query,
+        DbContext context
+    )
+        where TEntity : class
+    {
+        var entityType = context.Model.FindEntityType(typeof(TEntity));
+        var navigations = entityType?.GetNavigations() ?? Enumerable.Empty<INavigation>();
+
+        return navigations.Aggregate(
+            query,
+            (current, navigation) => current.Include(navigation.Name)
+        );
     }
 }

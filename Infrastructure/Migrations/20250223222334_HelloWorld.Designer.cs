@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250220181742_PaymentTypeCurrencyCorrectData")]
-    partial class PaymentTypeCurrencyCorrectData
+    [Migration("20250223222334_HelloWorld")]
+    partial class HelloWorld
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,6 +21,9 @@ namespace Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -216,7 +219,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("CustomerId", "PaymentTypeId", "Name")
                         .IsUnique();
 
-                    b.ToTable("Services");
+                    b.ToTable("ServiceContracts");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.StatusEntity", b =>
@@ -293,22 +296,22 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProjectServices", b =>
+            modelBuilder.Entity("ProjectServiceContracts", b =>
                 {
                     b.Property<int>("ProjectsEntityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServicesEntityId")
+                    b.Property<int>("ServiceContractsEntityId")
                         .HasColumnType("int");
 
-                    b.HasKey("ProjectsEntityId", "ServicesEntityId");
+                    b.HasKey("ProjectsEntityId", "ServiceContractsEntityId");
 
-                    b.HasIndex("ServicesEntityId");
+                    b.HasIndex("ServiceContractsEntityId");
 
-                    b.ToTable("ProjectServices");
+                    b.ToTable("ProjectServiceContracts", (string)null);
                 });
 
-            modelBuilder.Entity("RolesUsers", b =>
+            modelBuilder.Entity("RolesEntityUsersEntity", b =>
                 {
                     b.Property<int>("RolesEntityId")
                         .HasColumnType("int");
@@ -320,7 +323,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UsersEntityId");
 
-                    b.ToTable("RolesUsers");
+                    b.ToTable("RolesEntityUsersEntity");
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.CustomersEntity", b =>
@@ -372,33 +375,33 @@ namespace Infrastructure.Migrations
                     b.Navigation("PaymentTypeEntity");
                 });
 
-            modelBuilder.Entity("ProjectServices", b =>
+            modelBuilder.Entity("ProjectServiceContracts", b =>
                 {
                     b.HasOne("Infrastructure.Entities.ProjectsEntity", null)
                         .WithMany()
                         .HasForeignKey("ProjectsEntityId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Infrastructure.Entities.ServiceContractsEntity", null)
                         .WithMany()
-                        .HasForeignKey("ServicesEntityId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .HasForeignKey("ServiceContractsEntityId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RolesUsers", b =>
+            modelBuilder.Entity("RolesEntityUsersEntity", b =>
                 {
                     b.HasOne("Infrastructure.Entities.RolesEntity", null)
                         .WithMany()
                         .HasForeignKey("RolesEntityId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Infrastructure.Entities.UsersEntity", null)
                         .WithMany()
                         .HasForeignKey("UsersEntityId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

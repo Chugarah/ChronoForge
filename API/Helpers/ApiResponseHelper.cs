@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Helpers;
 
@@ -103,15 +104,52 @@ public abstract class ApiResponseHelper : IResult
     private static ProblemDetails CreateProblemDetails(
         string title,
         string detail,
-        int statusCode
-    ) =>
-        new()
+        int statusCode,
+        object? data = null
+    )
+    {
+        // Create a new ProblemDetails object
+        var problem = new ProblemDetails
         {
-            Type = "https://httpstatuses.io" +  statusCode,
+            Type = $"https://httpstatuses.io/{statusCode}",
             Title = title,
             Detail = detail,
             Status = statusCode,
         };
+
+        // Add optional data to the problem response
+        if (data != null)
+        {
+            problem.Extensions["data"] = data;
+        }
+
+        // Return the problem response
+        return problem;
+    }
+
+    /// <summary>
+    /// Returns a 400 Bad Request response with structured error details
+    /// https://stackoverflow.blog/2020/03/02/best-practices-for-rest-api-design/
+    /// </summary>
+    /// <param name="detail"></param>
+    /// <param name="statusCode"></param>
+    /// <param name="errorData"></param>
+    /// <returns></returns>
+    public static IResult Problem(
+        string detail,
+        HttpStatusCode statusCode,
+        object? errorData = null
+    )
+    {
+        return Results.Problem(
+            CreateProblemDetails(
+                title: statusCode.ToString(),
+                detail: detail,
+                statusCode: (int)statusCode,
+                data: errorData
+            )
+        );
+    }
 
     /// <summary>
     ///

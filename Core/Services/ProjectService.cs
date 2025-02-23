@@ -17,12 +17,12 @@ public class ProjectService(
     IUnitOfWork unitOfWork
 ) : IProjectService
 {
-    public async Task<ProjectShowDto?> CreateProjectAsync(ProjectInsertDto projectInsertDto)
+    public async Task<ProjectShowDto?> CreateProjectAsync(ProjectInsertFormDto projectInsertFormDto)
     {
         try
         {
             // Convert the DTO to a domain object
-            var projectInsert = projectDtoFactory.ToDomainProjectInsert(projectInsertDto);
+            var projectInsert = projectDtoFactory.ToDomainProjectInsert(projectInsertFormDto);
 
             #region BEGIN TRANSACTION
 
@@ -33,15 +33,21 @@ public class ProjectService(
             await projectRepository.CreateAsync(projectInsert);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
+
+            // Get the tracked entity with generated ID
+            var createdProject = await projectRepository.GetAsync(
+                p => projectInsert != null && p!.Id == projectInsert.Id,
+                true
+            );
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
 
             #endregion END TRANSACTION
 
-            // Return the created project as a display DTO
-            return projectDtoFactory.ToDtoProjectShow(projectInsert);
+            // Return show DTO with full details
+            return projectDtoFactory.ToDtoProjectShow(createdProject);
         }
         catch (Exception)
         {
@@ -62,7 +68,7 @@ public class ProjectService(
         try
         {
             // Get the project from the database
-            var project = await projectRepository.GetAsync(p => p != null && p.Id == id);
+            var project = await projectRepository.GetAsync(p => p != null && p.Id == id, false);
 
             // Convert the project to a display DTO
             return project != null ? projectDtoFactory.ToDtoProjectShow(project) : null;
@@ -85,7 +91,10 @@ public class ProjectService(
         try
         {
             // Get the project from the database
-            var project = await projectRepository.GetAsync(p => p != null && p.StatusId == id);
+            var project = await projectRepository.GetAsync(
+                p => p != null && p.StatusId == id,
+                false
+            );
 
             // Convert the project to a display DTO
             return project != null ? projectDtoFactory.ToDtoProjectShow(project) : null;
@@ -114,20 +123,19 @@ public class ProjectService(
         }
     }
 
-
     /// <summary>
     /// Update a project in the database
     /// </summary>
     /// <param name="projectUpdateDto"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<ProjectShowDto> UpdateProjectAsync(ProjectUpdateDto projectUpdateDto)
+    public async Task<ProjectUpdateDto> UpdateProjectAsync(ProjectUpdateDto projectUpdateDto)
     {
         try
         {
             // Get the project from the database
             var project =
-                await projectRepository.GetAsync(p => p!.Id == projectUpdateDto.Id)
+                await projectRepository.GetAsync(p => p!.Id == projectUpdateDto.Id, true)
                 ?? throw new Exception("Could not find the project in the database");
 
             // Update the project with the new values
@@ -147,7 +155,7 @@ public class ProjectService(
             await projectRepository.UpdateAsync(project);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
@@ -155,7 +163,7 @@ public class ProjectService(
             #endregion END TRANSACTION
 
             // Return the updated project as a display DTO
-            return projectDtoFactory.ToDtoProjectShow(project)!;
+            return projectUpdateDto;
         }
         catch (DbException ex)
         {
@@ -177,8 +185,9 @@ public class ProjectService(
         try
         {
             // Get the project from the database
-            var getProjects = await projectRepository
-                .GetAllAsync(p => p != null && p.StatusId == oldStatus);
+            var getProjects = await projectRepository.GetAllAsync(p =>
+                p != null && p.StatusId == oldStatus
+            );
             // Convert our Projects to a list
             var projectsEnumerable = getProjects.ToList();
 
@@ -206,7 +215,7 @@ public class ProjectService(
             }
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();
@@ -218,6 +227,7 @@ public class ProjectService(
                 p != null && projectsEnumerable.Select(pr => pr!.Id).Contains(p.Id)
             );
 
+            // Return the updated projects as a display DTO
             return projectDtoFactory.ToDtoProjectShow(updatedProjects);
         }
         catch (DbException)
@@ -234,7 +244,7 @@ public class ProjectService(
         {
             // Get the status from the database
             var projects =
-                await projectRepository.GetAsync(s => s!.Id == id)
+                await projectRepository.GetAsync(s => s!.Id == id, true)
                 ?? throw new KeyNotFoundException($"Project with ID {id} not found");
 
             #region BEGIN TRANSACTION
@@ -246,7 +256,7 @@ public class ProjectService(
             await projectRepository.DeleteAsync(projects);
 
             // Save the changes to the database
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync<object>();
 
             // Commit the transaction to ensure that all operations are successful
             await unitOfWork.CommitTransactionAsync();

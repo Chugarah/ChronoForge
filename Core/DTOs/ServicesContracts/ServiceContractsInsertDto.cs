@@ -1,9 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain;
 
 namespace Core.DTOs.ServicesContracts;
 
 public class ServiceContractsInsertDto
 {
+    // Adding a collection of Projects to the ServiceContractsInsertDtos
+    public ICollection<Projects?> Projects { get; set; } = new List<Projects?>();
+
     [Required]
     public int CustomerId { get; init; }
     [Required]

@@ -23,17 +23,17 @@ public class ProjectController(
     /// <summary>
     /// Create a new status
     /// </summary>
-    /// <param name="projectInsert">Status creation DTO</param>
+    /// <param name="projectInsertForm">Status creation DTO</param>
     /// <returns>Created status</returns>
     [HttpPost]
     [ProducesResponseType<ProjectShowDto>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IResult> CreateProjectAsync([FromBody] ProjectInsertDto projectInsert)
+    public async Task<IResult> CreateProjectAsync([FromBody] ProjectInsertFormDto projectInsertForm)
     {
         try
         {
             // Create the status
-            var displayDto = await projectService.CreateProjectAsync(projectInsert);
+            var displayDto = await projectService.CreateProjectAsync(projectInsertForm);
             // Return a created response
             return Results.CreatedAtRoute(
                 routeName: "GetProjectById",

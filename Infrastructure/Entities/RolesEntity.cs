@@ -10,7 +10,7 @@ public class RolesEntity
 {
     [Key]
     public int Id { get; init; }
-    public ICollection<UsersEntity> UsersEntity { get; set; } = new List<UsersEntity>();
+    public virtual ICollection<UsersEntity> UsersEntity { get; set; } = new List<UsersEntity>();
 
     [Required]
     [Column(TypeName = "nvarchar(50)")]

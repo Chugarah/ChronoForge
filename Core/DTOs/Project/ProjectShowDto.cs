@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using Core.DTOs.Project.Status;
+using Core.DTOs.ServicesContracts;
 using Domain;
 
 namespace Core.DTOs.Project;
@@ -9,6 +10,8 @@ public class ProjectShowDto
 {
     [Required]
     public int Id { get; init; }
+
+    public IEnumerable<ServiceContractsShowDto> ServiceContracts { get; set; } = [];
 
     [Required]
     public int StatusId { get; init; }
